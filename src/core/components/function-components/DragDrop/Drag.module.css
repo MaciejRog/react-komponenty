@@ -1,0 +1,7 @@
+.Drag {
+}
+
+.DragMoving {
+  pointer-events: none;
+  position: fixed;
+}

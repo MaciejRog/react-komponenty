@@ -1,0 +1,32 @@
+.DragDropExample {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.DragDropExample p {
+  padding: 12px;
+  width: 100vw;
+  border: 1px solid black;
+}
+
+.DropExample {
+  width: 60%;
+  min-height: 100px;
+  border: 1px solid black;
+}
+
+.DropExample :global(.active) {
+  border: 1px solid blue;
+}
+
+:global(.DragExample) {
+  width: max-content;
+  padding: 12px;
+  border: 1px solid blue;
+  background-color: white;
+}
