@@ -33,7 +33,7 @@ function Drag(props: TYPE_PROPS_DRAG) {
 
   const {
     name = "",
-    insideDrop = false,
+    insideDropPosition = null,
     removeOnDrag = false,
     className = "",
     children,
@@ -43,6 +43,10 @@ function Drag(props: TYPE_PROPS_DRAG) {
     if (moving) {
       addWindowEventListener("pointermove", moveDrag);
       addWindowEventListener("pointerup", endDrag);
+
+      return () => {
+        endDrag();
+      };
     }
   }, [moving]);
 
@@ -76,7 +80,11 @@ function Drag(props: TYPE_PROPS_DRAG) {
     <>
       <div
         ref={dragRef}
-        data-drag-inside-drop={`${insideDrop ? "true" : "false"}`}
+        data-drag-inside-drop-position={`${
+          insideDropPosition || insideDropPosition === 0
+            ? insideDropPosition
+            : ""
+        }`}
         data-drag-name={name}
         data-drag-element="true"
         className={`${className} ${styles.Drag} ${
@@ -93,7 +101,7 @@ function Drag(props: TYPE_PROPS_DRAG) {
       >
         {children}
       </div>
-      {moving && removeOnDrag ? (
+      {moving && !removeOnDrag ? (
         <div className={`${className} ${styles.Drag}`}>{children}</div>
       ) : null}
     </>

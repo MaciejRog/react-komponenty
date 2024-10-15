@@ -10,9 +10,9 @@ function ExampleDragDrop() {
       <div className={`${styles.DragDropExample}`}>
         <p>EXAMPLE DRAG DROP</p>
         <ExampleDrop />
-        <ExampleDrag1 id={1} />
-        <ExampleDrag1 id={2} />
-        <ExampleDrag1 id={3} />
+        <ExampleDrag1 id={1} bgColor="red" />
+        <ExampleDrag1 id={2} bgColor="green" />
+        <ExampleDrag1 id={3} bgColor="blue" />
       </div>
     </ContextProviderDragDrop>
   );
@@ -28,10 +28,16 @@ const ExampleDrop = () => {
   );
 };
 
-const ExampleDrag1 = ({ id = 1 }: { id: number }) => {
+const ExampleDrag1 = ({
+  id = 1,
+  bgColor = "white",
+}: {
+  id: number;
+  bgColor: string;
+}) => {
   return (
     <Drag name={`example-${id}`} className="DragExample">
-      <div>Przerzuć mnie {id}</div>
+      <div style={{ backgroundColor: bgColor }}>Przerzuć mnie {id}</div>
     </Drag>
   );
 };
