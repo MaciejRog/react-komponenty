@@ -1,0 +1,64 @@
+.fadeIn {
+  animation-name: fadeIn;
+}
+
+.fadeOut {
+  animation-name: fadeOut;
+}
+
+.bounce {
+  animation-name: bounce;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-24px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  65% {
+    transform: translateY(-12px);
+  }
+  75% {
+    transform: translateY(0);
+  }
+  82% {
+    transform: translateY(-6px);
+  }
+  87% {
+    transform: translateY(0);
+  }
+  93% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
