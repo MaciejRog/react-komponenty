@@ -1,3 +1,31 @@
+/* 
+##########################
+##
+VVVVVVVVVVVVVVVVVVVVVVVVV
+*/
+
+.transition-ease {
+  transition-timing-function: ease !important;
+}
+
+.transition-ease-in {
+  transition-timing-function: ease-in !important;
+}
+
+.transition-ease-out {
+  transition-timing-function: ease-out !important;
+}
+
+.transition-ease-in-out {
+  transition-timing-function: ease-in-out !important;
+}
+
+/* 
+##########################
+## ANIMATIONS
+VVVVVVVVVVVVVVVVVVVVVVVVV
+*/
+
 .fadeIn {
   animation-name: fadeIn;
 }

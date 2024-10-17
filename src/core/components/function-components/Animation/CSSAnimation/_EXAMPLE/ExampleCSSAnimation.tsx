@@ -3,7 +3,7 @@ import CSSAnimation from "../CSSAnimation";
 
 const animEnter = {
   animationName: "fadeIn",
-  otherClasses: "ABC test",
+  otherClasses: "transition-ease-in",
   duration: 2000,
   isInfinite: false,
 };
@@ -11,14 +11,14 @@ const animEnter = {
 const animLoaded = {
   animationName: "bounce",
   otherClasses: "",
-  duration: 2000,
+  duration: 1000,
   isInfinite: true,
 };
 
 const animExit = {
   animationName: "fadeOut",
   otherClasses: "CDE test",
-  duration: 2000,
+  duration: 3000,
   isInfinite: false,
 };
 
@@ -52,7 +52,7 @@ function ExampleCSSAnimation() {
           gap: "16px",
         }}
       >
-        {/* <CSSAnimation show={show}>
+        <CSSAnimation show={show}>
           <p>BEZ ZADNEGO</p>
           <TestComponent />
         </CSSAnimation>
@@ -75,7 +75,7 @@ function ExampleCSSAnimation() {
         <CSSAnimation show={show} afterLoaded={animLoaded} onExit={animExit}>
           <p> afterLoaded | onExit</p>
           <TestComponent />
-        </CSSAnimation> */}
+        </CSSAnimation>
         <CSSAnimation
           show={show}
           onEnter={animEnter}
