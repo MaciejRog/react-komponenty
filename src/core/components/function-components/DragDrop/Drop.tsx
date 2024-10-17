@@ -172,11 +172,13 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
       {elements.map((dragElement, id) => {
         return (
           <React.Fragment key={id}>
-            {tempElement.position === id ? (
-              <div
-                style={{ width: tempElement.width, height: tempElement.height }}
-              ></div>
-            ) : null}
+            <div
+              style={{
+                width: "100px", //tempElement.width,
+                height: "50px", //tempElement.height,
+                backgroundColor: "red",
+              }}
+            ></div>
             <Drag
               {...dragElement.props}
               insideDropPosition={id}

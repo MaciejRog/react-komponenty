@@ -1,10 +1,10 @@
-import ExampleCSSAnimation from "../components/function-components/Animation/CSSAnimation/_EXAMPLE/ExampleCSSAnimation";
+import ExampleAnimation from "../components/function-components/Animation/_EXAMPLE/ExampleAnimation";
 import ExampleDragDrop from "../components/function-components/DragDrop/_EXAMPLE/ExampleDragDrop";
 
 function Main() {
   return (
     <div>
-      <ExampleCSSAnimation />
+      <ExampleAnimation />
       <ExampleDragDrop />
     </div>
   );

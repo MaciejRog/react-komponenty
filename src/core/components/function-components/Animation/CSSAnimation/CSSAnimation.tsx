@@ -1,7 +1,8 @@
 import { memo, useEffect, useState } from "react";
 import "./CSSAnimation.classes.css";
 import { TYPE_CSSANIMATION_PROPS } from "./CSSAnimation.types";
-import { ANIMATION_PHASE, INIT_ANIMATION_DATA } from "./CSSAnimation.utils";
+import { INIT_ANIMATION_DATA } from "./CSSAnimation.utils";
+import { ANIMATION_PHASE } from "../Animation.utils";
 
 const CSSAnimation = memo(function CSSAnimation(
   props: TYPE_CSSANIMATION_PROPS

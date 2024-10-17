@@ -27,20 +27,25 @@ VVVVVVVVVVVVVVVVVVVVVVVVV
 */
 
 .fadeIn {
-  animation-name: fadeIn;
+  animation-name: fadeInAnimation;
 }
 
 .fadeOut {
-  animation-name: fadeOut;
+  animation-name: fadeOutAnimation;
 }
 
 .bounce {
-  animation-name: bounce;
+  animation-name: bounceAnimation;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInAnimation {
   0% {
     opacity: 0;
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: translateY(-24px);
   }
 
   100% {
@@ -48,7 +53,7 @@ VVVVVVVVVVVVVVVVVVVVVVVVV
   }
 }
 
-@keyframes fadeOut {
+@keyframes fadeOutAnimation {
   0% {
     opacity: 1;
   }
@@ -58,7 +63,7 @@ VVVVVVVVVVVVVVVVVVVVVVVVV
   }
 }
 
-@keyframes bounce {
+@keyframes bounceAnimation {
   0% {
     transform: translateY(0);
   }

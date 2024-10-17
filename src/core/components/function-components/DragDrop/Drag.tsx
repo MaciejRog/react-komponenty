@@ -63,9 +63,15 @@ function Drag(props: TYPE_PROPS_DRAG) {
   };
 
   const moveDrag = (e: React.PointerEvent<HTMLDivElement>) => {
-    const { pageX, pageY } = e;
-    setOffsetTop(pageY - shiftY.current);
-    setOffsetLeft(pageX - shiftX.current);
+    const { clientX, clientY } = e;
+    setOffsetTop(clientY - shiftY.current);
+    setOffsetLeft(clientX - shiftX.current);
+    // const { pageX, pageY } = e;
+    // setOffsetTop(pageY - shiftY.current);
+    // setOffsetLeft(pageX - shiftX.current);
+    // const { screenX, screenY } = e;
+    // setOffsetTop(screenY - shiftY.current);
+    // setOffsetLeft(screenX - shiftX.current);
   };
 
   const endDrag = () => {

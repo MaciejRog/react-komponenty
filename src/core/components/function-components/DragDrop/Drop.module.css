@@ -8,16 +8,16 @@
   user-select: none;
 }
 
-.Drop.DropFlexRow {
+.Drop:global(.DropFlexRow) {
   display: flex;
   flex-direction: row;
 }
 
-.Drop.DropFlexColumn {
+.Drop:global(.DropFlexColumn) {
   display: flex;
   flex-direction: column;
 }
 
-/* .Drop.DropAbsolute {
+/*.Drop:global(.DropAbsolute) {
   position: absolute;
 } */

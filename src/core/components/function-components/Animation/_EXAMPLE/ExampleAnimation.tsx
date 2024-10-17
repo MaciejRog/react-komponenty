@@ -1,16 +1,17 @@
 import { useState } from "react";
-import CSSAnimation from "../CSSAnimation";
+import CSSAnimation from "../CSSAnimation/CSSAnimation";
+import SizeAnimation from "../JSAnimation/SizeAnimation/SizeAnimation";
 
 const animEnter = {
   animationName: "fadeIn",
-  otherClasses: "transition-ease-in",
+  otherClasses: "",
   duration: 2000,
   isInfinite: false,
 };
 
 const animLoaded = {
-  animationName: "bounce",
-  otherClasses: "",
+  animationName: "", // "bounce",
+  otherClasses: "transition-ease-in",
   duration: 1000,
   isInfinite: true,
 };
@@ -22,7 +23,7 @@ const animExit = {
   isInfinite: false,
 };
 
-function ExampleCSSAnimation() {
+function ExampleAnimation() {
   const [show, setShow] = useState(true);
   return (
     <div
@@ -45,6 +46,7 @@ function ExampleCSSAnimation() {
       >
         {show ? "UKRYJ" : "POKAŻ"}
       </button>
+
       <div
         style={{
           display: "flex",
@@ -52,7 +54,7 @@ function ExampleCSSAnimation() {
           gap: "16px",
         }}
       >
-        <CSSAnimation show={show}>
+        {/* <CSSAnimation show={show}>
           <p>BEZ ZADNEGO</p>
           <TestComponent />
         </CSSAnimation>
@@ -84,14 +86,57 @@ function ExampleCSSAnimation() {
         >
           <p>onEnter | afterLoaded | onExit</p>
           <TestComponent />
+        </CSSAnimation> */}
+
+        {/* <CSSAnimation show={show} onEnter={animEnter} onExit={animExit}>
+          <p>onEnter | onExit</p>
+          <TestComponent />
+        </CSSAnimation> */}
+
+        <CSSAnimation show={show} onEnter={animEnter} onExit={animExit}>
+          <SizeAnimation
+            show={show}
+            enterDuration={2000}
+            exitDuration={3000}
+            animateWidth={false}
+          >
+            <p>onEnter | onExit</p>
+
+            <TestComponent />
+          </SizeAnimation>
         </CSSAnimation>
+        <CSSAnimation show={show} onEnter={animEnter} onExit={animExit}>
+          <SizeAnimation
+            show={show}
+            overflowVisible={false}
+            enterDuration={2000}
+            exitDuration={3000}
+            animateWidth={false}
+          >
+            <p>onEnter | onExit</p>
+
+            <TestComponent />
+          </SizeAnimation>
+        </CSSAnimation>
+
+        <SizeAnimation show={show} enterDuration={2000} exitDuration={2000}>
+          <TestComponent />
+        </SizeAnimation>
+        <SizeAnimation
+          show={show}
+          overflowVisible={false}
+          enterDuration={2000}
+          exitDuration={2000}
+        >
+          <TestComponent />
+        </SizeAnimation>
       </div>
     </div>
   );
 }
 
-export default ExampleCSSAnimation;
+export default ExampleAnimation;
 
 const TestComponent = () => {
-  return <div style={{ padding: "25px", backgroundColor: "red" }}>DZIAŁA</div>;
+  return <div style={{ padding: "12px", backgroundColor: "red" }}>DZIAŁA</div>;
 };
