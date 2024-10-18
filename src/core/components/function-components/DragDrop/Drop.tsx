@@ -35,6 +35,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
   const [status, setStatus] = useState(DROP_STATUS.INACTIVE);
   const [elements, setElements] = useState<TYPE_STATE[]>([]);
   const [tempElement, setTempElement] = useState<TYPE_DROP_TEMP_ELEMENT>({
+    elementAddedPosition: -1,
     position: -1,
     width: "0px",
     height: "0px",
@@ -56,6 +57,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
     }
     if (value.props) {
       setTempElement({
+        elementAddedPosition: -1,
         position: -1,
         width: "0px",
         height: "0px",
@@ -69,6 +71,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    console.log("POINTER MOVE = value.props = ", value.props);
     if (value.props) {
       const { clientX, clientY } = e;
       const temp = document.elementFromPoint(clientX, clientY);
@@ -91,6 +94,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
             if (dragPositionX <= clientX) {
               console.warn("Z PRAWEJ");
               setTempElement({
+                elementAddedPosition: -1,
                 position: overElementDragPosition + 1,
                 width: "100px",
                 height: "50px",
@@ -98,6 +102,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
             } else {
               console.warn("Z LEWEJ");
               setTempElement({
+                elementAddedPosition: -1,
                 position: overElementDragPosition,
                 width: "100px",
                 height: "50px",
@@ -108,6 +113,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
             if (dragPositionY <= clientY) {
               console.warn("JEST POD");
               setTempElement({
+                elementAddedPosition: -1,
                 position: overElementDragPosition + 1,
                 width: "100px",
                 height: "50px",
@@ -115,6 +121,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
             } else {
               console.warn("JEST NAD");
               setTempElement({
+                elementAddedPosition: -1,
                 position: overElementDragPosition,
                 width: "100px",
                 height: "50px",
@@ -122,6 +129,13 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
             }
           }
         }
+      } else {
+        setTempElement({
+          elementAddedPosition: -1,
+          position: -1,
+          width: "100px",
+          height: "50px",
+        });
       }
     }
   };
@@ -153,6 +167,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
       }
 
       setTempElement({
+        elementAddedPosition: tempElement.position,
         position: -1,
         width: "0px",
         height: "0px",
@@ -173,10 +188,24 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         return (
           <React.Fragment key={id}>
             <div
+              data-drag-element="true"
               style={{
-                width: "100px", //tempElement.width,
-                height: "50px", //tempElement.height,
-                backgroundColor: "red",
+                transition:
+                  tempElement.elementAddedPosition === id
+                    ? ""
+                    : "0.2s all linear",
+                paddingTop:
+                  layout === DROP_LAYOUT.FLEX_COLUMN
+                    ? `${
+                        tempElement.position === id ? tempElement.height : "0px"
+                      }`
+                    : "0px",
+                paddingLeft:
+                  layout === DROP_LAYOUT.FLEX_ROW
+                    ? `${
+                        tempElement.position === id ? tempElement.width : "0px"
+                      }`
+                    : "0px",
               }}
             ></div>
             <Drag
@@ -184,6 +213,36 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
               insideDropPosition={id}
               removeOnDrag={true}
             />
+            {id === elements.length - 1 ? (
+              <div
+                data-drag-element="true"
+                style={{
+                  transition:
+                    tempElement.elementAddedPosition === id ||
+                    tempElement.elementAddedPosition === elements.length
+                      ? ""
+                      : "0.2s all linear",
+                  paddingTop:
+                    layout === DROP_LAYOUT.FLEX_COLUMN
+                      ? `${
+                          tempElement.position === -1 ||
+                          tempElement.position === elements.length
+                            ? tempElement.height
+                            : "0px"
+                        }`
+                      : "0px",
+                  paddingLeft:
+                    layout === DROP_LAYOUT.FLEX_ROW
+                      ? `${
+                          tempElement.position === -1 ||
+                          tempElement.position === elements.length
+                            ? tempElement.width
+                            : "0px"
+                        }`
+                      : "0px",
+                }}
+              ></div>
+            ) : null}
           </React.Fragment>
         );
       })}

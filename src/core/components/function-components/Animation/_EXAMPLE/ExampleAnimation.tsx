@@ -54,7 +54,7 @@ function ExampleAnimation() {
           gap: "16px",
         }}
       >
-        {/* <CSSAnimation show={show}>
+        <CSSAnimation show={show}>
           <p>BEZ ZADNEGO</p>
           <TestComponent />
         </CSSAnimation>
@@ -86,12 +86,12 @@ function ExampleAnimation() {
         >
           <p>onEnter | afterLoaded | onExit</p>
           <TestComponent />
-        </CSSAnimation> */}
+        </CSSAnimation>
 
-        {/* <CSSAnimation show={show} onEnter={animEnter} onExit={animExit}>
+        <CSSAnimation show={show} onEnter={animEnter} onExit={animExit}>
           <p>onEnter | onExit</p>
           <TestComponent />
-        </CSSAnimation> */}
+        </CSSAnimation>
 
         <CSSAnimation show={show} onEnter={animEnter} onExit={animExit}>
           <SizeAnimation

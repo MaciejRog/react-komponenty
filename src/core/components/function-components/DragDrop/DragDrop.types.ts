@@ -24,6 +24,7 @@ export type TYPE_PROPS_DROP = {
 };
 
 export type TYPE_DROP_TEMP_ELEMENT = {
+  elementAddedPosition: number | null | undefined;
   position: number;
   width: string;
   height: string;

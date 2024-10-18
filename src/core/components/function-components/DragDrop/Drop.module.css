@@ -11,11 +11,13 @@
 .Drop:global(.DropFlexRow) {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .Drop:global(.DropFlexColumn) {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
 }
 
 /*.Drop:global(.DropAbsolute) {
