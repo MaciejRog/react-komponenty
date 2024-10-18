@@ -37,7 +37,7 @@ const ExampleDrag1 = ({
   bgColor: string;
 }) => {
   return (
-    <Drag name={`example-${id}`} className="DragExample">
+    <Drag groupId={`example-1-${id}`} className="DragExample">
       <div style={{ backgroundColor: bgColor }}>Przerzuć mnie {id}</div>
     </Drag>
   );
@@ -51,7 +51,7 @@ const ExampleDrag2 = ({
   bgColor: string;
 }) => {
   return (
-    <Drag name={`example-${id}`} className="DragExample">
+    <Drag groupId={`example-2-${id}`} className="DragExample">
       <div style={{ backgroundColor: bgColor }}>
         <span>Przerzuć mnie {id}</span>
         <div
@@ -62,7 +62,17 @@ const ExampleDrag2 = ({
             border: "2px solid black",
           }}
         >
-          <Drop layout={DROP_LAYOUT.FLEX_ROW}></Drop>
+          <Drop layout={DROP_LAYOUT.FLEX_ROW}>
+            <div
+              style={{
+                margin: "8px",
+                width: "150px",
+                backgroundColor: "green",
+              }}
+            >
+              <Drop layout={DROP_LAYOUT.FLEX_COLUMN}></Drop>
+            </div>
+          </Drop>
         </div>
       </div>
     </Drag>

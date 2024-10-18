@@ -1,5 +1,11 @@
 export type TYPE_STATE = {
-  props: TYPE_PROPS_DRAG | null;
+  dragProps: {
+    props: TYPE_PROPS_DRAG;
+    width: number;
+    height: number;
+  } | null;
+  dropProps: TYPE_PROPS_DROP | null;
+  dropId: string | null;
 };
 
 export type TYPE_INIT_CONTEXT = {
@@ -11,8 +17,9 @@ export type TYPE_INIT_CONTEXT = {
 };
 
 export type TYPE_PROPS_DRAG = {
-  name?: string;
+  groupId: string;
   insideDropPosition?: number | null;
+  insideDropId?: string | null;
   removeOnDrag?: boolean;
   className?: string;
   children?: any;
@@ -21,6 +28,7 @@ export type TYPE_PROPS_DRAG = {
 export type TYPE_PROPS_DROP = {
   className?: string;
   layout: string;
+  children?: any;
 };
 
 export type TYPE_DROP_TEMP_ELEMENT = {

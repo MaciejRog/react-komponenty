@@ -3,6 +3,11 @@
 }
 
 .DragMoving {
+  z-index: 10001;
   pointer-events: none;
   position: fixed;
+}
+
+.DragMoving * {
+  pointer-events: none;
 }

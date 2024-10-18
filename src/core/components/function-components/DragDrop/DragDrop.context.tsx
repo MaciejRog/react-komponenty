@@ -3,7 +3,9 @@ import { CONTEXT_ACTIONS_DRAG_DROP } from "./DragDrop.utils";
 import { TYPE_INIT_CONTEXT, TYPE_STATE } from "./DragDrop.types";
 
 const INIT_STATE: TYPE_STATE = {
-  props: null,
+  dragProps: null,
+  dropProps: null,
+  dropId: null,
 };
 
 const INIT_CONTEXT: TYPE_INIT_CONTEXT = {
@@ -18,18 +20,48 @@ const reducer = (
   action: { type: string; payload?: any }
 ) => {
   switch (action.type) {
-    case CONTEXT_ACTIONS_DRAG_DROP.SET:
+    case CONTEXT_ACTIONS_DRAG_DROP.SET_DRAG:
       if (!action.payload) {
-        throw new Error("Cannot SET CONTEXT_ACTIONS_DRAG_DROP | no payload");
+        throw new Error(
+          "Cannot SET_DRAG CONTEXT_ACTIONS_DRAG_DROP | no payload"
+        );
       }
       return {
         ...state,
-        props: action.payload,
+        dragProps: action.payload,
       };
-    case CONTEXT_ACTIONS_DRAG_DROP.EMPTY:
+    case CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_ID:
+      if (action?.payload) {
+        return {
+          ...state,
+          dropId: action.payload,
+        };
+      } else {
+        throw new Error(
+          "Cannot SET_DROP_ID CONTEXT_ACTIONS_DRAG_DROP | no payload"
+        );
+      }
+    case CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_PROPS:
+      if (action?.payload) {
+        return {
+          ...state,
+          dropProps: action.payload,
+        };
+      } else {
+        throw new Error(
+          "Cannot SET_DROP_PROPS CONTEXT_ACTIONS_DRAG_DROP | no payload"
+        );
+      }
+    case CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DRAG:
       return {
         ...state,
-        props: null,
+        dragProps: null,
+      };
+    case CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DROP:
+      return {
+        ...state,
+        dropProps: null,
+        dropId: null,
       };
     default:
       throw new Error("Cannot find CONTEXT_ACTIONS_DRAG_DROP");
