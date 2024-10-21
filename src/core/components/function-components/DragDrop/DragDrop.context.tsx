@@ -3,9 +3,11 @@ import { CONTEXT_ACTIONS_DRAG_DROP } from "./DragDrop.utils";
 import { TYPE_INIT_CONTEXT, TYPE_STATE } from "./DragDrop.types";
 
 const INIT_STATE: TYPE_STATE = {
+  endDragProps: null,
   dragProps: null,
   dropProps: null,
   dropId: null,
+  end: true,
 };
 
 const INIT_CONTEXT: TYPE_INIT_CONTEXT = {
@@ -28,7 +30,9 @@ const reducer = (
       }
       return {
         ...state,
+        endDragProps: null,
         dragProps: action.payload,
+        end: false,
       };
     case CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_ID:
       if (action?.payload) {
@@ -52,10 +56,12 @@ const reducer = (
           "Cannot SET_DROP_PROPS CONTEXT_ACTIONS_DRAG_DROP | no payload"
         );
       }
-    case CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DRAG:
+    case CONTEXT_ACTIONS_DRAG_DROP.END_DRAG:
       return {
         ...state,
+        endDragProps: action.payload,
         dragProps: null,
+        end: true,
       };
     case CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DROP:
       return {

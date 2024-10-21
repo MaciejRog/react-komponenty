@@ -128,7 +128,17 @@ function Drag(props: TYPE_PROPS_DRAG) {
     removeWindowEventListeners("pointerup");
 
     setMoving(false);
-    dispatch({ type: CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DRAG });
+    if (dragRef.current) {
+      const { width, height } = dragRef.current.getBoundingClientRect();
+      dispatch({
+        type: CONTEXT_ACTIONS_DRAG_DROP.END_DRAG,
+        payload: {
+          props: props,
+          width: width,
+          height: height,
+        },
+      });
+    }
   };
 
   return (

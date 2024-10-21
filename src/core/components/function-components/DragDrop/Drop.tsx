@@ -11,8 +11,8 @@ import { useContextDrapDrop } from "./DragDrop.context";
 import Drag from "./Drag";
 import {
   TYPE_DROP_TEMP_ELEMENT,
+  TYPE_PROPS_DRAG,
   TYPE_PROPS_DROP,
-  TYPE_STATE,
 } from "./DragDrop.types";
 
 const getDragElement = (htmlEl: HTMLElement | null): HTMLElement | null => {
@@ -34,7 +34,9 @@ const getDragElement = (htmlEl: HTMLElement | null): HTMLElement | null => {
 
 const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
   const [status, setStatus] = useState(DROP_STATUS.INACTIVE);
-  const [elements, setElements] = useState<(TYPE_STATE & { id: string })[]>([]);
+  const [elements, setElements] = useState<
+    { id: string; props: TYPE_PROPS_DRAG }[]
+  >([]);
   const [tempElement, setTempElement] = useState<TYPE_DROP_TEMP_ELEMENT>({
     elementAddedPosition: -1,
     position: -1,
@@ -58,12 +60,76 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         setStatus(DROP_STATUS.INACTIVE);
       }
     }
-  }, [value.dropId]);
+    if (value.dragProps) {
+      const dragInsideDropId = value.dragProps?.props.insideDropId;
+      const dragElementDropPosition =
+        value.dragProps?.props?.insideDropPosition;
+      if (
+        value.dropId === dropId &&
+        dragInsideDropId === dropId &&
+        (dragElementDropPosition || dragElementDropPosition === 0)
+      ) {
+        setTempElement({
+          elementAddedPosition: dragElementDropPosition,
+          position: dragElementDropPosition,
+          width: `${value.dragProps?.width ? value.dragProps.width : 0}px`,
+          height: `${value.dragProps?.height ? value.dragProps.height : 0}px`,
+        });
+      } else {
+        if (tempElement.position !== -2) {
+          setTempElement((prev) => {
+            return {
+              elementAddedPosition: prev.elementAddedPosition,
+              position: -2,
+              width: "0px",
+              height: "0px",
+            };
+          });
+        }
+      }
+    } else {
+      if (tempElement.position !== -2) {
+        setTempElement((prev) => {
+          return {
+            elementAddedPosition: prev.elementAddedPosition,
+            position: -2,
+            width: "0px",
+            height: "0px",
+          };
+        });
+      }
+    }
+  }, [value.dropId, value.dragProps]);
 
-  // const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-  //   console.warn("DROP | pointer down");
-  //   handlePointerMove(e);
-  // };
+  useEffect(() => {
+    if (value.end) {
+      const dragInsideDropId = value.endDragProps?.props.insideDropId;
+      const dragElementDropPosition =
+        value.endDragProps?.props?.insideDropPosition;
+
+      if (value.dropId === dropId) {
+        if (dragInsideDropId === dropId) {
+          if (dragElementDropPosition || dragElementDropPosition === 0) {
+            changeElementPosition(dragElementDropPosition);
+          } else {
+            addElement();
+          }
+        } else {
+          addElement();
+        }
+      } else {
+        if (dragInsideDropId === dropId) {
+          deleteElement(dragElementDropPosition);
+        }
+      }
+      setTempElement({
+        elementAddedPosition: tempElement.position,
+        position: -2,
+        width: "0px",
+        height: "0px",
+      });
+    }
+  }, [value.end]);
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (value.dropId === dropId && value.dragProps) {
@@ -78,7 +144,6 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         const overElement = getDragElement(temp as HTMLElement);
 
         if (overElement) {
-          console.warn("overElement.dataset = ", overElement.dataset);
           let overElementDragPosition: number | null = null;
           if (overElement.dataset?.dragInsideDropPosition) {
             try {
@@ -94,7 +159,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
             if (layout === DROP_LAYOUT.FLEX_ROW) {
               const dragPositionX = rect.left + rect.width / 2;
               if (dragPositionX <= clientX) {
-                console.warn("Z PRAWEJ");
+                // console.warn("Z PRAWEJ");
                 setTempElement({
                   elementAddedPosition: -1,
                   position: overElementDragPosition + 1,
@@ -102,7 +167,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
                   height: `${value.dragProps.height}px`,
                 });
               } else {
-                console.warn("Z LEWEJ");
+                // console.warn("Z LEWEJ");
                 setTempElement({
                   elementAddedPosition: -1,
                   position: overElementDragPosition,
@@ -113,7 +178,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
             } else if (layout === DROP_LAYOUT.FLEX_COLUMN) {
               const dragPositionY = rect.top + rect.height / 2;
               if (dragPositionY <= clientY) {
-                console.warn("JEST POD");
+                // console.warn("JEST POD");
                 setTempElement({
                   elementAddedPosition: -1,
                   position: overElementDragPosition + 1,
@@ -121,7 +186,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
                   height: `${value.dragProps.height}px`,
                 });
               } else {
-                console.warn("JEST NAD");
+                // console.warn("JEST NAD");
                 setTempElement({
                   elementAddedPosition: -1,
                   position: overElementDragPosition,
@@ -141,103 +206,82 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         }
       }
     } else {
-      if (
-        tempElement.elementAddedPosition !== -1 ||
-        tempElement.position !== -1
-      ) {
-        setTempElement({
-          elementAddedPosition: -1,
-          position: -1,
-          width: "0px",
-          height: "0px",
+      if (tempElement.position !== -2) {
+        setTempElement((prev) => {
+          return {
+            elementAddedPosition: prev.elementAddedPosition,
+            position: -2,
+            width: "0px",
+            height: "0px",
+          };
         });
       }
     }
   };
 
-  const handlePointerUp = () => {
-    if (value.dropId === dropId && value.dragProps) {
-      const dragElementDropPosition =
-        value.dragProps?.props?.insideDropPosition;
-      const dragDropId = value.dragProps?.props?.insideDropId;
-      const dragGroupId = value.dragProps?.props?.groupId;
+  const changeElementPosition = (elementPosition: number) => {
+    if (tempElement.position >= 0) {
+      setElements((prev) => {
+        return changeArrayElementPosition(
+          prev,
+          elementPosition,
+          tempElement.position
+        );
+      });
+    } else {
+      setElements((prev) => {
+        const elementToMove = prev[elementPosition];
+        const newArray = prev.filter((_, index) => {
+          if (index === elementPosition) {
+            return false;
+          }
+          return true;
+        });
 
-      console.warn(
-        `handlePointerUp | tempElement.position = ${tempElement.position} | dragDropId = ${dragDropId} === dropId = ${dropId}| dragElementDropPosition = ${dragElementDropPosition} | value.dragProps?.props = `,
-        value.dragProps?.props
-      );
+        return [...newArray, elementToMove];
+      });
+    }
+  };
 
+  const addElement = () => {
+    if (value.endDragProps?.props) {
+      const dragGroupId = value.endDragProps.props?.groupId;
+      const newValue = {
+        props: value.endDragProps.props,
+        id: `${dragGroupId}-${generateDragId(dragGroupId)}`,
+      };
       if (tempElement.position >= 0) {
-        if (
-          dragDropId === dropId &&
-          (dragElementDropPosition || dragElementDropPosition === 0)
-        ) {
-          console.error(
-            `ZMIEŃ ELEMENTY | dragElementDropPosition = ${dragElementDropPosition} |  tempElement.position = ${tempElement.position}`
+        setElements((prev) => {
+          return addArrayElementAtPosition(
+            prev,
+            newValue,
+            tempElement.position
           );
-          setElements((prev) => {
-            return changeArrayElementPosition(
-              prev,
-              dragElementDropPosition,
-              tempElement.position
-            );
-          });
-        } else {
-          const newValue = {
-            ...value,
-            id: `${dragGroupId}-${generateDragId(dragGroupId)}`,
-          };
-          console.error(
-            `DODAJ ELEMENT NA POZYCJE | tempElement.position = ${tempElement.position}`
-          );
-          setElements((prev) => {
-            return addArrayElementAtPosition(
-              prev,
-              newValue,
-              tempElement.position
-            );
-          });
-        }
+        });
       } else {
-        if (!(dragElementDropPosition || dragElementDropPosition === 0)) {
-          const newValue = {
-            ...value,
-            id: `${dragGroupId}-${generateDragId(dragGroupId)}`,
-          };
-          console.error(
-            `DODAJ ELEMENT NA KONIEC | tempElement.position = ${tempElement.position}`
-          );
-          setElements((prev) => {
-            return [...prev, newValue];
-          });
-        } else {
-          setElements((prev) => {
-            const elementToMove = prev[dragElementDropPosition];
-            const newArray = prev.filter((_, index) => {
-              if (index === dragElementDropPosition) {
-                return false;
-              }
-              return true;
-            });
-
-            return [...newArray, elementToMove];
-          });
-        }
+        setElements((prev) => {
+          return [...prev, newValue];
+        });
       }
-      setTempElement({
-        elementAddedPosition: tempElement.position,
-        position: -1,
-        width: "0px",
-        height: "0px",
+    }
+  };
+
+  const deleteElement = (elementPosition: number | null | undefined) => {
+    if (elementPosition || elementPosition === 0) {
+      setElements((prev) => {
+        const newArray = prev.filter((_, index) => {
+          if (index === elementPosition) {
+            return false;
+          }
+          return true;
+        });
+
+        return newArray;
       });
     }
   };
 
   const generateDragId = (groupId: string = ""): number => {
-    console.warn(
-      `[dropId = ${dropId}] GENDERATE DRAG 1 = `,
-      elementsIdsRef.current
-    );
     let init = 0;
     if (elementsIdsRef.current?.[groupId]) {
       init = elementsIdsRef.current[groupId];
@@ -246,10 +290,6 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
     }
     init++;
     elementsIdsRef.current[groupId] = init;
-    console.warn(
-      `[dropId = ${dropId}] GENDERATE DRAG 2 = `,
-      elementsIdsRef.current
-    );
     return init;
   };
 
@@ -258,19 +298,15 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
       data-drop-element="true"
       data-drop-id={dropId}
       className={`${styles.Drop} ${layout} ${status} ${className} `}
-      // onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
     >
       {elements.map((dragElement, id) => {
-        // console.warn(`DROP ${id} | DRAG id = ${dragElement.id}`);
         return (
           <React.Fragment key={dragElement.id}>
             <div
               data-test={dragElement.id}
               data-drag-element="true"
               style={{
-                backgroundColor: "red",
                 transition:
                   tempElement.elementAddedPosition === id
                     ? ""
@@ -307,9 +343,9 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
                     : "0px",
               }}
             ></div>
-            {dragElement.dragProps ? (
+            {dragElement?.props ? (
               <Drag
-                {...dragElement.dragProps.props}
+                {...dragElement.props}
                 insideDropPosition={id}
                 insideDropId={dropId}
                 removeOnDrag={true}
@@ -319,7 +355,6 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
               <div
                 data-drag-element="true"
                 style={{
-                  backgroundColor: "orange",
                   transition:
                     tempElement.elementAddedPosition === id ||
                     tempElement.elementAddedPosition === elements.length

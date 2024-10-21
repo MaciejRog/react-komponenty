@@ -6,6 +6,12 @@ export type TYPE_STATE = {
   } | null;
   dropProps: TYPE_PROPS_DROP | null;
   dropId: string | null;
+  end: boolean;
+  endDragProps: {
+    props: TYPE_PROPS_DRAG;
+    width: number;
+    height: number;
+  } | null;
 };
 
 export type TYPE_INIT_CONTEXT = {
