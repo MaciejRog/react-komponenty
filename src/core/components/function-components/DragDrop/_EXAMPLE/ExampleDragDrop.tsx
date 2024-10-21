@@ -13,7 +13,7 @@ function ExampleDragDrop() {
         <ExampleDrag1 id={1} bgColor="red" />
         <ExampleDrag1 id={2} bgColor="green" />
         <ExampleDrag1 id={3} bgColor="blue" />
-        {/* <ExampleDrag2 id={4} bgColor="yellow" /> */}
+        <ExampleDrag2 id={4} bgColor="yellow" />
       </div>
     </ContextProviderDragDrop>
   );
@@ -24,7 +24,10 @@ export default ExampleDragDrop;
 const ExampleDrop = () => {
   return (
     <div className={`${styles.DropExample}`}>
-      <Drop layout={DROP_LAYOUT.FLEX_COLUMN}></Drop>
+      <Drop
+        className={`${styles.DropExampleInner}`}
+        layout={DROP_LAYOUT.FLEX_COLUMN}
+      ></Drop>
     </div>
   );
 };
@@ -63,7 +66,7 @@ const ExampleDrag2 = ({
           }}
         >
           <Drop layout={DROP_LAYOUT.FLEX_ROW}>
-            <div
+            {/* <div
               style={{
                 margin: "8px",
                 width: "150px",
@@ -71,7 +74,7 @@ const ExampleDrag2 = ({
               }}
             >
               <Drop layout={DROP_LAYOUT.FLEX_COLUMN}></Drop>
-            </div>
+            </div> */}
           </Drop>
         </div>
       </div>

@@ -1,6 +1,6 @@
 .DragDropExample {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,8 +16,13 @@
 
 .DropExample {
   width: 60%;
-  min-height: 100px;
+
+  height: auto;
   border: 1px solid black;
+}
+
+.DropExampleInner {
+  min-height: 100px;
 }
 
 :global([data-drop-element="true"].active) {
@@ -25,7 +30,7 @@
 }
 
 :global(.DragExample) {
-  width: max-content;
+  /* width: max-content; */
   padding: 12px;
   border: 1px solid blue;
   background-color: white;
