@@ -47,7 +47,10 @@ function Drag(props: TYPE_PROPS_DRAG) {
   const [offsetLeft, setOffsetLeft] = useState(0);
 
   const {
-    value: { dropId },
+    value: {
+      drop: { dropId },
+      end,
+    },
     dispatch,
   } = useContextDrapDrop();
 
@@ -63,6 +66,16 @@ function Drag(props: TYPE_PROPS_DRAG) {
     className = "",
     children,
   } = props;
+
+  useEffect(() => {
+    if (end) {
+      if (document.body.classList.contains("window-drag-drop-moving")) {
+        document.body.classList.remove("window-drag-drop-moving");
+      }
+    } else {
+      document.body.classList.add("window-drag-drop-moving");
+    }
+  }, [end]);
 
   useEffect(() => {
     if (moving) {
@@ -87,10 +100,13 @@ function Drag(props: TYPE_PROPS_DRAG) {
     if (dragRef.current) {
       const { top, left, width, height } =
         dragRef.current.getBoundingClientRect();
+
       dispatch({
         type: CONTEXT_ACTIONS_DRAG_DROP.SET_DRAG,
         payload: {
           props: props,
+          dropId: insideDropId,
+          dropPosition: insideDropPosition,
           width: width,
           height: height,
         },
@@ -128,17 +144,9 @@ function Drag(props: TYPE_PROPS_DRAG) {
     removeWindowEventListeners("pointerup");
 
     setMoving(false);
-    if (dragRef.current) {
-      const { width, height } = dragRef.current.getBoundingClientRect();
-      dispatch({
-        type: CONTEXT_ACTIONS_DRAG_DROP.END_DRAG,
-        payload: {
-          props: props,
-          width: width,
-          height: height,
-        },
-      });
-    }
+    dispatch({
+      type: CONTEXT_ACTIONS_DRAG_DROP.END_DRAG,
+    });
   };
 
   return (

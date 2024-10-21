@@ -13,7 +13,7 @@ function ExampleDragDrop() {
         <ExampleDrag1 id={1} bgColor="red" />
         <ExampleDrag1 id={2} bgColor="green" />
         <ExampleDrag1 id={3} bgColor="blue" />
-        <ExampleDrag2 id={4} bgColor="yellow" />
+        {/* <ExampleDrag2 id={4} bgColor="yellow" /> */}
       </div>
     </ContextProviderDragDrop>
   );

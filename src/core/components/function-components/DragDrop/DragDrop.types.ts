@@ -1,21 +1,21 @@
-export type TYPE_STATE = {
-  dragProps: {
-    props: TYPE_PROPS_DRAG;
+export type TYPE_CONTEXT_STATE = {
+  drag: {
+    props: TYPE_PROPS_DRAG | null;
+    dropId: string | null;
+    dropPosition: number | null;
     width: number;
     height: number;
-  } | null;
-  dropProps: TYPE_PROPS_DROP | null;
-  dropId: string | null;
+  };
+  drop: {
+    props: TYPE_PROPS_DROP | null;
+    dropId: string | null;
+    dropPosition: number | null;
+  };
   end: boolean;
-  endDragProps: {
-    props: TYPE_PROPS_DRAG;
-    width: number;
-    height: number;
-  } | null;
 };
 
-export type TYPE_INIT_CONTEXT = {
-  value: TYPE_STATE;
+export type TYPE_CONTEXT = {
+  value: TYPE_CONTEXT_STATE;
   dispatch: React.Dispatch<{
     type: string;
     payload?: any;
@@ -37,9 +37,13 @@ export type TYPE_PROPS_DROP = {
   children?: any;
 };
 
-export type TYPE_DROP_TEMP_ELEMENT = {
-  elementAddedPosition: number | null | undefined;
+export type TYPE_PROPS_DROP_TEMP_ELEMENT = {
+  id: number;
   position: number;
+  paddingWidth: string;
+  paddingHeight: string;
   width: string;
   height: string;
+  animateEnter: boolean;
+  animateExit: boolean;
 };
