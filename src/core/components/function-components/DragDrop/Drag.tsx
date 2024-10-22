@@ -48,6 +48,7 @@ function Drag(props: TYPE_PROPS_DRAG) {
 
   const {
     value: {
+      drag: { width: dragWidth, height: dragHeight },
       drop: { dropId },
       end,
     },
@@ -93,7 +94,6 @@ function Drag(props: TYPE_PROPS_DRAG) {
   const endDrag = useCallback(() => {
     removeWindowEventListeners("pointermove");
     removeWindowEventListeners("pointerup");
-
     setMoving(false);
     dispatch({
       type: CONTEXT_ACTIONS_DRAG_DROP.END_DRAG,
@@ -112,27 +112,34 @@ function Drag(props: TYPE_PROPS_DRAG) {
 
   useEffect(() => {
     if (moving) {
+      removeWindowEventListeners("pointermove");
+      removeWindowEventListeners("pointerup");
       addWindowEventListener("pointermove", moveDrag);
       addWindowEventListener("pointerup", endDrag);
-
-      return () => {
-        endDrag();
-      };
     }
   }, [endDrag, moveDrag, moving]);
 
   useEffect(() => {
     if (moving) {
-      removeWindowEventListeners("pointermove");
-      addWindowEventListener("pointermove", moveDrag);
+      if (dragRef.current) {
+        const { width, height } = dragRef.current.getBoundingClientRect();
+        if (width !== dragWidth || height !== dragHeight) {
+          dispatch({
+            type: CONTEXT_ACTIONS_DRAG_DROP.SET_DRAG_DIMENSIONS,
+            payload: {
+              width: width,
+              height: height,
+            },
+          });
+        }
+      }
     }
-  }, [moving, dropId, moveDrag]);
+  }, [dispatch, dragHeight, dragWidth, moving]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (dragRef.current) {
-      const { top, left, width, height } =
-        dragRef.current.getBoundingClientRect();
+      const { top, left } = dragRef.current.getBoundingClientRect();
 
       dispatch({
         type: CONTEXT_ACTIONS_DRAG_DROP.SET_DRAG,
@@ -140,8 +147,6 @@ function Drag(props: TYPE_PROPS_DRAG) {
           props: props,
           dropId: insideDropId,
           dropPosition: insideDropPosition,
-          width: width,
-          height: height,
         },
       });
       setMoving(true);

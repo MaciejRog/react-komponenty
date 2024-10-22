@@ -44,6 +44,22 @@ const reducer = (
           props: action.payload.props,
           dropId: action.payload.dropId,
           dropPosition: action.payload.dropPosition,
+        },
+        // drop: {
+        //   ...state.drop,
+        // },
+      };
+    case CONTEXT_ACTIONS_DRAG_DROP.SET_DRAG_DIMENSIONS:
+      if (!action.payload) {
+        throw new Error(
+          "Cannot SET_DRAG CONTEXT_ACTIONS_DRAG_DROP | no payload"
+        );
+      }
+      return {
+        ...state,
+        end: false,
+        drag: {
+          ...state.drag,
           width: action.payload.width,
           height: action.payload.height,
         },
@@ -159,7 +175,6 @@ export const ContextProviderDragDrop = (props: { children: any }) => {
   const [value, dispatch] = useReducer(reducer, INIT_STATE);
   const { children } = props;
 
-  // console.log("CONTEXT VALUE = ", value);
   return (
     <DragDropContext.Provider
       value={{
