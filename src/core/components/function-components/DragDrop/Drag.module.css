@@ -5,10 +5,10 @@
 
 .DragMoving {
   z-index: 10001;
-  pointer-events: none;
+  pointer-events: none !important;
   position: fixed;
 }
 
 .DragMoving * {
-  pointer-events: none;
+  pointer-events: none !important;
 }

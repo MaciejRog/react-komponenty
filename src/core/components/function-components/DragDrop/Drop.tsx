@@ -19,17 +19,36 @@ const getDragElement = (htmlEl: HTMLElement | null): HTMLElement | null => {
   let elToReturn = null;
   const getElement = (el: HTMLElement | null) => {
     if (el) {
-      if (el?.dataset?.dragElement) {
-        elToReturn = el;
+      if (el.dataset?.dropElement) {
+        //
       } else {
-        if (el?.parentElement) {
-          getElement(el.parentElement);
+        if (el?.dataset?.dragElement) {
+          elToReturn = el;
+        } else {
+          if (el?.parentElement) {
+            getElement(el.parentElement);
+          }
         }
       }
     }
   };
   getElement(htmlEl);
   return elToReturn;
+};
+
+const generateDragId = (
+  idsRef: Record<string, number> = {},
+  groupId: string = ""
+): number => {
+  let init = 0;
+  if (idsRef?.[groupId]) {
+    init = idsRef[groupId];
+  } else {
+    idsRef[groupId] = 0;
+  }
+  init++;
+  idsRef[groupId] = init;
+  return init;
 };
 
 const INIT_TEMP_ELEMENT = {
@@ -120,7 +139,10 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
                 props: elementProps,
                 id: `drop-${dropId}-drag-${
                   elementProps?.groupId
-                }-${generateDragId(elementProps?.groupId)}`,
+                }-${generateDragId(
+                  elementsIdsRef.current,
+                  elementProps?.groupId
+                )}`,
               };
               return addArrayElementAtPosition(prev, newElement, dropPosition);
             });
@@ -135,57 +157,63 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
       }
     } else {
       /// temp Element
-      if (
-        contextDrop.dropPosition ||
-        contextDrop.dropPosition == 0 ||
-        (contextDrop.dropId === dropId &&
-          contextDrag.dropId === dropId &&
-          (contextDrag.dropPosition || contextDrag.dropPosition === 0))
-      ) {
-        let position = -1;
-        let animateEnter = true;
-        if (contextDrop.dropPosition || contextDrop.dropPosition == 0) {
-          position = contextDrop.dropPosition;
-        } else {
-          if (contextDrag.dropPosition || contextDrag.dropPosition == 0) {
-            position = contextDrag.dropPosition;
-            animateEnter = false;
+      if (contextDrop.dropId === dropId) {
+        if (
+          contextDrop.dropPosition ||
+          contextDrop.dropPosition == 0 ||
+          (contextDrop.dropId === dropId &&
+            contextDrag.dropId === dropId &&
+            (contextDrag.dropPosition || contextDrag.dropPosition === 0))
+        ) {
+          let position = -1;
+          let animateEnter = true;
+          if (contextDrop.dropPosition || contextDrop.dropPosition == 0) {
+            position = contextDrop.dropPosition;
+          } else {
+            if (contextDrag.dropPosition || contextDrag.dropPosition == 0) {
+              position = contextDrag.dropPosition;
+              animateEnter = false;
+            }
           }
-        }
-        let tempPaddingWidth = "0px";
-        let tempPaddingHeight = "0px";
-        let tempWidth = "0px";
-        let tempHeight = "0px";
-        if (layout === DROP_LAYOUT.FLEX_COLUMN) {
-          tempWidth = `${contextDrag.width}px`; // '100%',
-          tempPaddingHeight = `${contextDrag.height}px`;
-        }
-        if (layout === DROP_LAYOUT.FLEX_ROW) {
-          tempHeight = `${contextDrag.height}px`; // '100%',
-          tempPaddingWidth = `${contextDrag.width}px`;
-        }
-        if (tempElement.position !== position) {
-          setTempElement({
-            position: position,
-            paddingWidth: tempPaddingWidth,
-            paddingHeight: tempPaddingHeight,
-            width: tempWidth,
-            height: tempHeight,
-            animateEnter: animateEnter,
-            animateExit: true,
-          });
-        }
-        if (contextDrop.props === null) {
-          dispatch({
-            type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_PROPS,
-            payload: props,
-          });
-        }
-        if (contextDrop.dropPosition === null) {
-          dispatch({
-            type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
-            payload: position,
-          });
+          let tempPaddingWidth = "0px";
+          let tempPaddingHeight = "0px";
+          let tempWidth = "0px";
+          let tempHeight = "0px";
+          if (layout === DROP_LAYOUT.FLEX_COLUMN) {
+            tempWidth = "100%"; //`${contextDrag.width}px`; // '100%',
+            tempPaddingHeight = `${contextDrag.height}px`;
+          }
+          if (layout === DROP_LAYOUT.FLEX_ROW) {
+            tempHeight = "100%"; //`${contextDrag.height}px`; // '100%',
+            tempPaddingWidth = `${contextDrag.width}px`;
+          }
+          if (tempElement.position !== position) {
+            setTempElement({
+              position: position,
+              paddingWidth: tempPaddingWidth,
+              paddingHeight: tempPaddingHeight,
+              width: tempWidth,
+              height: tempHeight,
+              animateEnter: animateEnter,
+              animateExit: true,
+            });
+          }
+          if (contextDrop.props === null) {
+            dispatch({
+              type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_PROPS,
+              payload: props,
+            });
+          }
+          if (contextDrop.dropPosition === null) {
+            dispatch({
+              type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
+              payload: position,
+            });
+          }
+        } else {
+          if (tempElement.position !== INIT_TEMP_ELEMENT.position) {
+            setTempElement(INIT_TEMP_ELEMENT);
+          }
         }
       } else {
         if (tempElement.position !== INIT_TEMP_ELEMENT.position) {
@@ -201,18 +229,6 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
     }
   }, [elements.length]);
 
-  const generateDragId = (groupId: string = ""): number => {
-    let init = 0;
-    if (elementsIdsRef.current?.[groupId]) {
-      init = elementsIdsRef.current[groupId];
-    } else {
-      elementsIdsRef.current[groupId] = 0;
-    }
-    init++;
-    elementsIdsRef.current[groupId] = init;
-    return init;
-  };
-
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (contextDrop.dropId === dropId && contextDrag.props) {
       if (contextDrop.props === null) {
@@ -227,71 +243,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
 
         if (overElement) {
           if (!overElement.dataset.dragDropHollow) {
-            let overElementDragPosition: number | null = null;
-            if (overElement.dataset?.dragInsideDropPosition) {
-              try {
-                overElementDragPosition = Number(
-                  overElement.dataset.dragInsideDropPosition
-                );
-              } catch (exc) {
-                console.error("Drop | cannot convert drop position to number");
-              }
-            }
-            if (overElementDragPosition || overElementDragPosition === 0) {
-              const rect = overElement.getBoundingClientRect();
-              if (layout === DROP_LAYOUT.FLEX_ROW) {
-                const dragPositionX = rect.left + rect.width / 2;
-                if (dragPositionX <= clientX) {
-                  // console.warn("Z PRAWEJ");
-                  if (
-                    contextDrop.dropPosition !==
-                    overElementDragPosition + 1
-                  ) {
-                    dispatch({
-                      type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
-                      payload: overElementDragPosition + 1,
-                    });
-                  }
-                } else {
-                  // console.warn("Z LEWEJ");
-                  if (contextDrop.dropPosition !== overElementDragPosition) {
-                    dispatch({
-                      type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
-                      payload: overElementDragPosition,
-                    });
-                  }
-                }
-              } else if (layout === DROP_LAYOUT.FLEX_COLUMN) {
-                const dragPositionY = rect.top + rect.height / 2;
-                if (dragPositionY <= clientY) {
-                  // console.warn("JEST POD");
-                  if (
-                    contextDrop.dropPosition !==
-                    overElementDragPosition + 1
-                  ) {
-                    dispatch({
-                      type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
-                      payload: overElementDragPosition + 1,
-                    });
-                  }
-                } else {
-                  // console.warn("JEST NAD");
-                  if (contextDrop.dropPosition !== overElementDragPosition) {
-                    dispatch({
-                      type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
-                      payload: overElementDragPosition,
-                    });
-                  }
-                }
-              }
-            } else {
-              if (contextDrop.dropPosition !== elements.length + 1) {
-                dispatch({
-                  type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
-                  payload: elements.length + 1,
-                });
-              }
-            }
+            handlePointerMoveOverElement(clientX, clientY, overElement);
           }
         } else {
           if (contextDrop.dropPosition !== elements.length + 1) {
@@ -302,6 +254,56 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
           }
         }
       }
+    }
+  };
+
+  const handlePointerMoveOverElement = (
+    clientX: number,
+    clientY: number,
+    overElement: HTMLElement
+  ) => {
+    let overElementDragPosition: number | null = null;
+    if (overElement.dataset?.dragInsideDropPosition) {
+      try {
+        overElementDragPosition = Number(
+          overElement.dataset.dragInsideDropPosition
+        );
+      } catch (exc) {
+        console.error("Drop | cannot convert drop position to number");
+      }
+    }
+    if (overElementDragPosition || overElementDragPosition === 0) {
+      const rect = overElement.getBoundingClientRect();
+      if (layout === DROP_LAYOUT.FLEX_ROW) {
+        const dragPositionX = rect.left + rect.width / 2;
+        if (dragPositionX <= clientX) {
+          // console.warn("Z PRAWEJ");
+          contextSetDropPosition(overElementDragPosition + 1);
+        } else {
+          // console.warn("Z LEWEJ");
+          contextSetDropPosition(overElementDragPosition);
+        }
+      } else if (layout === DROP_LAYOUT.FLEX_COLUMN) {
+        const dragPositionY = rect.top + rect.height / 2;
+        if (dragPositionY <= clientY) {
+          // console.warn("JEST POD");
+          contextSetDropPosition(overElementDragPosition + 1);
+        } else {
+          // console.warn("JEST NAD");
+          contextSetDropPosition(overElementDragPosition);
+        }
+      }
+    } else {
+      contextSetDropPosition(elements.length + 1);
+    }
+  };
+
+  const contextSetDropPosition = (newPosition: number) => {
+    if (contextDrop.dropPosition !== newPosition) {
+      dispatch({
+        type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
+        payload: newPosition,
+      });
     }
   };
 
@@ -328,6 +330,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         );
       })}
       <DropTempElemenet {...tempElement} id={elements.length + 1} />
+      <div style={{ minWidth: "50px", minHeight: "50px" }}></div>
       {children}
     </div>
   );
@@ -398,6 +401,7 @@ const DropTempElemenet = (props: TYPE_PROPS_DROP_TEMP_ELEMENT) => {
       data-drag-drop-hollow="true"
       data-drag-element="true"
       style={{
+        backgroundColor: "red",
         transition: `${tranistionTime}s padding linear`,
         paddingTop: position === id ? paddingHeight : "0px",
         paddingLeft: position === id ? paddingWidth : "0px",
