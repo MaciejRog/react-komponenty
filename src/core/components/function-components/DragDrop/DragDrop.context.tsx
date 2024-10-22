@@ -16,6 +16,7 @@ const INIT_STATE: TYPE_CONTEXT_STATE = {
     dropPosition: null,
   },
   end: true,
+  refreshDrop: true,
 };
 
 const INIT_CONTEXT: TYPE_CONTEXT = {
@@ -39,6 +40,7 @@ const reducer = (
       return {
         ...state,
         end: false,
+        refreshDrop: false,
         drag: {
           ...state.drag,
           props: action.payload.props,
@@ -122,6 +124,7 @@ const reducer = (
           dropId: INIT_STATE.drag.dropId,
           dropPosition: INIT_STATE.drag.dropPosition,
         },
+        refreshDrop: true,
       };
     case CONTEXT_ACTIONS_DRAG_DROP.DRAG_ADDED:
       return {
@@ -138,6 +141,7 @@ const reducer = (
           dropId: INIT_STATE.drag.dropId,
           dropPosition: INIT_STATE.drag.dropPosition,
         },
+        refreshDrop: true,
       };
     case CONTEXT_ACTIONS_DRAG_DROP.DRAG_CHANGED:
       return {
@@ -150,6 +154,7 @@ const reducer = (
           ...state.drop,
           ...INIT_STATE.drop,
         },
+        refreshDrop: true,
       };
     case CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DROP:
       return {

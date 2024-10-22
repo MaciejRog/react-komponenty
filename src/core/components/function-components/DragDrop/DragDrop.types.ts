@@ -12,6 +12,7 @@ export type TYPE_CONTEXT_STATE = {
     dropPosition: number | null;
   };
   end: boolean;
+  refreshDrop: boolean;
 };
 
 export type TYPE_CONTEXT = {

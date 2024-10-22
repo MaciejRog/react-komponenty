@@ -70,13 +70,21 @@ const INIT_TEMP_ELEMENT = {
 
 const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
   const [status, setStatus] = useState(DROP_STATUS.INACTIVE);
+  const [prodElements, setProdElements] = useState<
+    { id: string; props: TYPE_PROPS_DRAG }[]
+  >([]);
   const [elements, setElements] = useState<
     { id: string; props: TYPE_PROPS_DRAG }[]
   >([]);
   const [tempElement, setTempElement] = useState(INIT_TEMP_ELEMENT);
   const dropId = useId();
   const {
-    value: { drag: contextDrag, drop: contextDrop, end: contextEnd },
+    value: {
+      drag: contextDrag,
+      drop: contextDrop,
+      end: contextEnd,
+      refreshDrop: contextRefresh,
+    },
     dispatch,
   } = useContextDrapDrop();
 
@@ -278,6 +286,12 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
     }
   }, [contextEnd, modifyElements, showTempElement]);
 
+  useEffect(() => {
+    if (contextRefresh === true) {
+      setProdElements(elements);
+    }
+  }, [elements, contextRefresh]);
+
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (contextDrop.dropId === dropId && contextDrag.props) {
       if (contextDrop.props === null) {
@@ -373,7 +387,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
       className={`${styles.Drop} ${layout} ${status} ${className} `}
       onPointerMove={handlePointerMove}
     >
-      {elements.map((dragElement, id) => {
+      {prodElements.map((dragElement, id) => {
         return (
           <React.Fragment key={dragElement.id}>
             <DropTempElemenet {...tempElement} id={id} />
@@ -460,7 +474,6 @@ const DropTempElemenet = (props: TYPE_PROPS_DROP_TEMP_ELEMENT) => {
       data-drag-drop-hollow="true"
       data-drag-element="true"
       style={{
-        backgroundColor: "red",
         transition: `${tranistionTime}s padding linear`,
         paddingTop: position === id ? paddingHeight : "0px",
         paddingLeft: position === id ? paddingWidth : "0px",
