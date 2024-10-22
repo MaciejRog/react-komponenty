@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import "./CSSAnimation.classes.css";
 import { TYPE_CSSANIMATION_PROPS } from "./CSSAnimation.types";
 import { INIT_ANIMATION_DATA } from "./CSSAnimation.utils";
@@ -25,6 +25,19 @@ const CSSAnimation = memo(function CSSAnimation(
     props?.[animationPhase as keyof TYPE_CSSANIMATION_PROPS]?.isInfinite ??
     INIT_ANIMATION_DATA?.isInfinite;
 
+  const handleAnimationEnd = useCallback(() => {
+    switch (animationPhase) {
+      case ANIMATION_PHASE.ENTER:
+        setAnimationPhase(ANIMATION_PHASE.LOADED);
+        break;
+      case ANIMATION_PHASE.EXIT:
+        setShow(false);
+        break;
+      default:
+        break;
+    }
+  }, [animationPhase]);
+
   useEffect(() => {
     const temp = componentShow;
 
@@ -43,20 +56,7 @@ const CSSAnimation = memo(function CSSAnimation(
     if (duration === 0) {
       handleAnimationEnd();
     }
-  }, [animationPhase, duration]);
-
-  const handleAnimationEnd = () => {
-    switch (animationPhase) {
-      case ANIMATION_PHASE.ENTER:
-        setAnimationPhase(ANIMATION_PHASE.LOADED);
-        break;
-      case ANIMATION_PHASE.EXIT:
-        setShow(false);
-        break;
-      default:
-        break;
-    }
-  };
+  }, [animationPhase, duration, handleAnimationEnd]);
 
   return (
     <>

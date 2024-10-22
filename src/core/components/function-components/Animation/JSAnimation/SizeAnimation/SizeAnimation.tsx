@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { timingLinear } from "../JSAnimation.utils";
 import { ANIMATION_PHASE } from "../../Animation.utils";
 
@@ -33,7 +33,7 @@ function SizeAnimation(props: {
   const enterAnimRef = useRef<number | undefined>(undefined);
   const exitAnimRef = useRef<number | undefined>(undefined);
 
-  const enterAnim = () => {
+  const enterAnim = useCallback(() => {
     const startTime = performance.now();
 
     const animate = (time: number) => {
@@ -41,7 +41,7 @@ function SizeAnimation(props: {
       if (timeFraction > 1) {
         timeFraction = 1;
       }
-      let progress = timingLinear(timeFraction);
+      const progress = timingLinear(timeFraction);
 
       setStyle((prev) => {
         const newStyles: Record<string, any> = {};
@@ -64,9 +64,9 @@ function SizeAnimation(props: {
     };
 
     enterAnimRef.current = requestAnimationFrame(animate);
-  };
+  }, [animateHeight, animateWidth, enterDuration]);
 
-  const exitAnim = () => {
+  const exitAnim = useCallback(() => {
     const startTime = performance.now();
 
     const animate = (time: number) => {
@@ -74,7 +74,7 @@ function SizeAnimation(props: {
       if (timeFraction > 1) {
         timeFraction = 1;
       }
-      let progress = timingLinear(timeFraction);
+      const progress = timingLinear(timeFraction);
 
       setStyle((prev) => {
         const newStyles: Record<string, any> = {};
@@ -103,7 +103,7 @@ function SizeAnimation(props: {
     };
 
     exitAnimRef.current = requestAnimationFrame(animate);
-  };
+  }, [animateHeight, animateWidth, exitDuration]);
 
   useEffect(() => {
     if (divRef.current) {
@@ -142,7 +142,7 @@ function SizeAnimation(props: {
       default:
         break;
     }
-  }, [animationPhase]);
+  }, [animationPhase, enterAnim, exitAnim]);
 
   return (
     <>

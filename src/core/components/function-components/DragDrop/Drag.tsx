@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Drag.module.css";
 import { useContextDrapDrop } from "./DragDrop.context";
 import { CONTEXT_ACTIONS_DRAG_DROP } from "./DragDrop.utils";
@@ -67,6 +67,39 @@ function Drag(props: TYPE_PROPS_DRAG) {
     children,
   } = props;
 
+  const moveDrag = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const { clientX, clientY } = e;
+      setOffsetTop(clientY - shiftY.current);
+      setOffsetLeft(clientX - shiftX.current);
+
+      const dropElement = getDropElement(clientX, clientY);
+      if (dropElement?.dataset?.dropId) {
+        if (dropId !== dropElement.dataset.dropId) {
+          dispatch({
+            type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_ID,
+            payload: dropElement.dataset.dropId,
+          });
+        }
+      } else {
+        if (dropId !== null) {
+          dispatch({ type: CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DROP });
+        }
+      }
+    },
+    [dispatch, dropId]
+  );
+
+  const endDrag = useCallback(() => {
+    removeWindowEventListeners("pointermove");
+    removeWindowEventListeners("pointerup");
+
+    setMoving(false);
+    dispatch({
+      type: CONTEXT_ACTIONS_DRAG_DROP.END_DRAG,
+    });
+  }, [dispatch]);
+
   useEffect(() => {
     if (end) {
       if (document.body.classList.contains("window-drag-drop-moving")) {
@@ -86,14 +119,14 @@ function Drag(props: TYPE_PROPS_DRAG) {
         endDrag();
       };
     }
-  }, [moving]);
+  }, [endDrag, moveDrag, moving]);
 
   useEffect(() => {
     if (moving) {
       removeWindowEventListeners("pointermove");
       addWindowEventListener("pointermove", moveDrag);
     }
-  }, [moving, dropId]);
+  }, [moving, dropId, moveDrag]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -117,36 +150,6 @@ function Drag(props: TYPE_PROPS_DRAG) {
       shiftY.current = clientY - top;
       moveDrag(e);
     }
-  };
-
-  const moveDrag = (e: React.PointerEvent<HTMLDivElement>) => {
-    const { clientX, clientY } = e;
-    setOffsetTop(clientY - shiftY.current);
-    setOffsetLeft(clientX - shiftX.current);
-
-    const dropElement = getDropElement(clientX, clientY);
-    if (dropElement?.dataset?.dropId) {
-      if (dropId !== dropElement.dataset.dropId) {
-        dispatch({
-          type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_ID,
-          payload: dropElement.dataset.dropId,
-        });
-      }
-    } else {
-      if (dropId !== null) {
-        dispatch({ type: CONTEXT_ACTIONS_DRAG_DROP.EMPTY_DROP });
-      }
-    }
-  };
-
-  const endDrag = () => {
-    removeWindowEventListeners("pointermove");
-    removeWindowEventListeners("pointerup");
-
-    setMoving(false);
-    dispatch({
-      type: CONTEXT_ACTIONS_DRAG_DROP.END_DRAG,
-    });
   };
 
   return (

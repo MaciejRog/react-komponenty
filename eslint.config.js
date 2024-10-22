@@ -20,12 +20,12 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": [
-        "warn",
+        "off",
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unsafe-function-type": "off",
     },
-    types: ["vite/client"],
+    // types: ["vite/client"],
   }
 );

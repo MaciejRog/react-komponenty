@@ -87,7 +87,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         setStatus(DROP_STATUS.INACTIVE);
       }
     }
-  }, [contextDrop.dropId]);
+  }, [contextDrop.dropId, dropId, status]);
 
   useEffect(() => {
     if (contextEnd === true) {
@@ -221,13 +221,13 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         }
       }
     }
-  }, [contextEnd, contextDrag, contextDrop, layout]);
+  }, [contextDrag.dropId, contextDrag.dropPosition, contextDrag.height, contextDrag.props, contextDrag.width, contextDrop.dropId, contextDrop.dropPosition, contextDrop.props, contextEnd, dispatch, dropId, layout, props, tempElement.position]);
 
   useEffect(() => {
     if (tempElement.position !== INIT_TEMP_ELEMENT.position) {
       setTempElement(INIT_TEMP_ELEMENT);
     }
-  }, [elements.length]);
+  }, [elements.length, tempElement.position]);
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (contextDrop.dropId === dropId && contextDrag.props) {
@@ -269,7 +269,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
           overElement.dataset.dragInsideDropPosition
         );
       } catch (exc) {
-        console.error("Drop | cannot convert drop position to number");
+        console.error("Drop | cannot convert drop position to number = ", exc);
       }
     }
     if (overElementDragPosition || overElementDragPosition === 0) {
@@ -394,7 +394,7 @@ const DropTempElemenet = (props: TYPE_PROPS_DROP_TEMP_ELEMENT) => {
       default:
         break;
     }
-  }, [animationPhase]);
+  }, [animateEnter, animateExit, animationPhase]);
 
   return (
     <div

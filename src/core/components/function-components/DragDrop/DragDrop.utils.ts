@@ -29,8 +29,7 @@ export function addArrayElementAtPosition(
   const array = [...argsArray];
   let arrayToReturn: any[] = [];
   if (position || position === 0) {
-    if (position === -1) {
-    } else {
+    if (position !== -1) {
       const firstPart = array.filter((_, id) => {
         if (id < position) {
           return true;
@@ -67,7 +66,7 @@ export function changeArrayElementPosition(
       elementPosition < array.length &&
       elementNewPosition >= 0
     ) {
-      let elToMove = array[elementPosition];
+      const elToMove = array[elementPosition];
       array[elementPosition] = undefined;
 
       const firstPart = array.slice(0, elementNewPosition);

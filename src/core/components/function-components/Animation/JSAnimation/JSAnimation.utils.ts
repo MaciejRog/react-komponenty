@@ -10,7 +10,7 @@ export function animate(args: TYPE_JS_ANIMATE_FUN) {
     if (timeFraction > 1) {
       timeFraction = 1;
     }
-    let progress = timingFun(timeFraction);
+    const progress = timingFun(timeFraction);
 
     drawFun(progress, animationId);
 
