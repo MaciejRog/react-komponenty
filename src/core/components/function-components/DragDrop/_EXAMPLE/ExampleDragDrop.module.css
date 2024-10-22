@@ -22,7 +22,9 @@
 }
 
 .DropExampleInner {
+  overflow-y: auto;
   min-height: 100px;
+  max-height: 800px;
 }
 
 :global([data-drop-element="true"].active) {

@@ -66,7 +66,7 @@ const ExampleDrag2 = ({
           }}
         >
           <Drop layout={DROP_LAYOUT.FLEX_ROW}>
-            {/* <div
+            <div
               style={{
                 margin: "8px",
                 width: "150px",
@@ -74,7 +74,7 @@ const ExampleDrag2 = ({
               }}
             >
               <Drop layout={DROP_LAYOUT.FLEX_COLUMN}></Drop>
-            </div> */}
+            </div>
           </Drop>
         </div>
       </div>
