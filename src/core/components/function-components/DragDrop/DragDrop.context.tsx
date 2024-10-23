@@ -9,6 +9,8 @@ const INIT_STATE: TYPE_CONTEXT_STATE = {
     dropPosition: null,
     width: 0,
     height: 0,
+    shiftX: 0,
+    shiftY: 0,
   },
   drop: {
     props: null,
@@ -46,6 +48,8 @@ const reducer = (
           props: action.payload.props,
           dropId: action.payload.dropId,
           dropPosition: action.payload.dropPosition,
+          shiftX: action.payload.shiftX,
+          shiftY: action.payload.shiftY,
         },
         // drop: {
         //   ...state.drop,
@@ -134,6 +138,8 @@ const reducer = (
           props: INIT_STATE.drag.props,
           width: INIT_STATE.drag.width,
           height: INIT_STATE.drag.height,
+          shiftX: INIT_STATE.drag.shiftX,
+          shiftY: INIT_STATE.drag.shiftY,
         },
         drop: {
           ...state.drop,

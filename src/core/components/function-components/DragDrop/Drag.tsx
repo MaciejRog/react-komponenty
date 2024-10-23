@@ -139,7 +139,11 @@ function Drag(props: TYPE_PROPS_DRAG) {
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (dragRef.current) {
+      const { clientX, clientY } = e;
       const { top, left } = dragRef.current.getBoundingClientRect();
+
+      shiftX.current = clientX - left;
+      shiftY.current = clientY - top;
 
       dispatch({
         type: CONTEXT_ACTIONS_DRAG_DROP.SET_DRAG,
@@ -147,12 +151,11 @@ function Drag(props: TYPE_PROPS_DRAG) {
           props: props,
           dropId: insideDropId,
           dropPosition: insideDropPosition,
+          shiftX: clientX - left,
+          shiftY: clientY - top,
         },
       });
       setMoving(true);
-      const { clientX, clientY } = e;
-      shiftX.current = clientX - left;
-      shiftY.current = clientY - top;
       moveDrag(e);
     }
   };

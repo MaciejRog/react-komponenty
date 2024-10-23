@@ -23,12 +23,23 @@ export default ExampleDragDrop;
 
 const ExampleDrop = () => {
   return (
-    <div className={`${styles.DropExample}`}>
-      <Drop
-        className={`${styles.DropExampleInner}`}
-        layout={DROP_LAYOUT.FLEX_COLUMN}
-      ></Drop>
-    </div>
+    <>
+      <span>FLEX COLUMN</span>
+      <div className={`${styles.DropExample}`}>
+        <Drop
+          className={`${styles.DropExampleInner}`}
+          layout={DROP_LAYOUT.FLEX_COLUMN}
+        ></Drop>
+      </div>
+      <hr />
+      <span>ABOSLUTE</span>
+      <div className={`${styles.DropExample}`}>
+        <Drop
+          className={`${styles.DropExampleInner}`}
+          layout={DROP_LAYOUT.ABSOLUTE}
+        ></Drop>
+      </div>
+    </>
   );
 };
 

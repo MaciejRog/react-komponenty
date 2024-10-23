@@ -71,10 +71,10 @@ const INIT_TEMP_ELEMENT = {
 const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
   const [status, setStatus] = useState(DROP_STATUS.INACTIVE);
   const [prodElements, setProdElements] = useState<
-    { id: string; props: TYPE_PROPS_DRAG }[]
+    { id: string; top: string; left: string; props: TYPE_PROPS_DRAG }[]
   >([]);
   const [elements, setElements] = useState<
-    { id: string; props: TYPE_PROPS_DRAG }[]
+    { id: string; top: string; left: string; props: TYPE_PROPS_DRAG }[]
   >([]);
   const [tempElement, setTempElement] = useState(INIT_TEMP_ELEMENT);
   const dropId = useId();
@@ -88,22 +88,46 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
     dispatch,
   } = useContextDrapDrop();
 
+  const htmlDropRef = useRef<HTMLDivElement | null>(null);
+  const dragShiftX = useRef(0);
+  const dragShiftY = useRef(0);
+  const dropClientX = useRef(0);
+  const dropClientY = useRef(0);
   const elementsIdsRef = useRef<Record<string, number>>({});
 
   const { className, layout, children } = props;
 
   const modifyElementsSwitchElements = useCallback(
     (oldPosition: number, newPosition: number) => {
-      if (oldPosition !== newPosition) {
+      if (layout === DROP_LAYOUT.ABSOLUTE) {
         setElements((prev) => {
-          return changeArrayElementPosition(prev, oldPosition, newPosition);
+          return prev.map((el, id) => {
+            if (id === oldPosition) {
+              return {
+                ...el,
+                top: `${
+                  dropClientY.current - dragShiftY.current - contextDrag.shiftY
+                }px`,
+                left: `${
+                  dropClientX.current - dragShiftX.current - contextDrag.shiftX
+                }px`,
+              };
+            }
+            return el;
+          });
         });
+      } else {
+        if (oldPosition !== newPosition) {
+          setElements((prev) => {
+            return changeArrayElementPosition(prev, oldPosition, newPosition);
+          });
+        }
       }
       dispatch({
         type: CONTEXT_ACTIONS_DRAG_DROP.DRAG_CHANGED,
       });
     },
-    [dispatch]
+    [contextDrag.shiftX, contextDrag.shiftY, dispatch, layout]
   );
 
   const modifyElementsAddElement = useCallback(() => {
@@ -116,13 +140,26 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
           elementsIdsRef.current,
           elementProps?.groupId
         )}`,
+        top: `${
+          dropClientY.current - dragShiftY.current - contextDrag.shiftY
+        }px`,
+        left: `${
+          dropClientX.current - dragShiftX.current - contextDrag.shiftX
+        }px`,
       };
       return addArrayElementAtPosition(prev, newElement, dropPosition);
     });
     dispatch({
       type: CONTEXT_ACTIONS_DRAG_DROP.DRAG_ADDED,
     });
-  }, [contextDrag.props, contextDrop.dropPosition, dispatch, dropId]);
+  }, [
+    contextDrag.props,
+    contextDrag.shiftX,
+    contextDrag.shiftY,
+    contextDrop.dropPosition,
+    dispatch,
+    dropId,
+  ]);
 
   const modifyElementsDeleteElement = useCallback(() => {
     const dragPosition = contextDrag.dropPosition;
@@ -187,53 +224,54 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
           (contextDrag.dropPosition || contextDrag.dropPosition === 0))
       ) {
         let position = -1;
-        let animateEnter = true;
-        if (contextDrop.dropPosition || contextDrop.dropPosition == 0) {
-          position = contextDrop.dropPosition;
-        } else {
-          if (contextDrag.dropPosition || contextDrag.dropPosition == 0) {
-            position = contextDrag.dropPosition;
-            animateEnter = false;
-          }
-        }
-        let tempPaddingWidth = "0px";
-        let tempPaddingHeight = "0px";
-        let tempWidth = "0px";
-        let tempHeight = "0px";
-        if (layout === DROP_LAYOUT.FLEX_COLUMN) {
-          tempWidth = "100%"; //`${contextDrag.width}px`; // '100%',
-          tempPaddingHeight = `${contextDrag.height}px`;
-        }
-        if (layout === DROP_LAYOUT.FLEX_ROW) {
-          tempHeight = "100%"; //`${contextDrag.height}px`; // '100%',
-          tempPaddingWidth = `${contextDrag.width}px`;
-        }
-
-        setTempElement((prev) => {
-          if (prev.position !== position) {
-            return {
-              position: position,
-              paddingWidth: tempPaddingWidth,
-              paddingHeight: tempPaddingHeight,
-              width: tempWidth,
-              height: tempHeight,
-              animateEnter: animateEnter,
-              animateExit: true,
-            };
-          } else if (
-            prev.paddingHeight !== tempPaddingHeight ||
-            prev.paddingWidth !== tempPaddingWidth
-          ) {
-            return {
-              ...prev,
-              paddingWidth: tempPaddingWidth,
-              paddingHeight: tempPaddingHeight,
-            };
+        if (layout !== DROP_LAYOUT.ABSOLUTE) {
+          let animateEnter = true;
+          if (contextDrop.dropPosition || contextDrop.dropPosition == 0) {
+            position = contextDrop.dropPosition;
           } else {
-            return prev;
+            if (contextDrag.dropPosition || contextDrag.dropPosition == 0) {
+              position = contextDrag.dropPosition;
+              animateEnter = false;
+            }
           }
-        });
+          let tempPaddingWidth = "0px";
+          let tempPaddingHeight = "0px";
+          let tempWidth = "0px";
+          let tempHeight = "0px";
+          if (layout === DROP_LAYOUT.FLEX_COLUMN) {
+            tempWidth = "100%"; //`${contextDrag.width}px`; // '100%',
+            tempPaddingHeight = `${contextDrag.height}px`;
+          }
+          if (layout === DROP_LAYOUT.FLEX_ROW) {
+            tempHeight = "100%"; //`${contextDrag.height}px`; // '100%',
+            tempPaddingWidth = `${contextDrag.width}px`;
+          }
 
+          setTempElement((prev) => {
+            if (prev.position !== position) {
+              return {
+                position: position,
+                paddingWidth: tempPaddingWidth,
+                paddingHeight: tempPaddingHeight,
+                width: tempWidth,
+                height: tempHeight,
+                animateEnter: animateEnter,
+                animateExit: true,
+              };
+            } else if (
+              prev.paddingHeight !== tempPaddingHeight ||
+              prev.paddingWidth !== tempPaddingWidth
+            ) {
+              return {
+                ...prev,
+                paddingWidth: tempPaddingWidth,
+                paddingHeight: tempPaddingHeight,
+              };
+            } else {
+              return prev;
+            }
+          });
+        }
         if (contextDrop.props === null) {
           dispatch({
             type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_PROPS,
@@ -301,19 +339,36 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
         });
       } else {
         const { clientX, clientY } = e;
-        const temp = document.elementFromPoint(clientX, clientY);
-        const overElement = getDragElement(temp as HTMLElement);
-
-        if (overElement) {
-          if (!overElement.dataset.dragDropHollow) {
-            handlePointerMoveOverElement(clientX, clientY, overElement);
+        if (layout === DROP_LAYOUT.ABSOLUTE) {
+          const rect = htmlDropRef.current?.getBoundingClientRect();
+          if (rect) {
+            const { top, left } = rect;
+            dragShiftX.current = left;
+            dragShiftY.current = top;
+            dropClientX.current = clientX;
+            dropClientY.current = clientY;
           }
-        } else {
           if (contextDrop.dropPosition !== elements.length + 1) {
             dispatch({
               type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
               payload: elements.length + 1,
             });
+          }
+        } else {
+          const temp = document.elementFromPoint(clientX, clientY);
+          const overElement = getDragElement(temp as HTMLElement);
+
+          if (overElement) {
+            if (!overElement.dataset.dragDropHollow) {
+              handlePointerMoveOverElement(clientX, clientY, overElement);
+            }
+          } else {
+            if (contextDrop.dropPosition !== elements.length + 1) {
+              dispatch({
+                type: CONTEXT_ACTIONS_DRAG_DROP.SET_DROP_POSITION,
+                payload: elements.length + 1,
+              });
+            }
           }
         }
       }
@@ -382,6 +437,7 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
 
   return (
     <div
+      ref={htmlDropRef}
       data-drop-element="true"
       data-drop-id={dropId}
       className={`${styles.Drop} ${layout} ${status} ${className} `}
@@ -392,12 +448,29 @@ const Drop = memo(function Drop(props: TYPE_PROPS_DROP) {
           <React.Fragment key={dragElement.id}>
             <DropTempElemenet {...tempElement} id={id} />
             {dragElement?.props ? (
-              <Drag
-                {...dragElement.props}
-                insideDropPosition={id}
-                insideDropId={dropId}
-                removeOnDrag={true}
-              />
+              layout === DROP_LAYOUT.ABSOLUTE ? (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: dragElement.top,
+                    left: dragElement.left,
+                  }}
+                >
+                  <Drag
+                    {...dragElement.props}
+                    insideDropPosition={id}
+                    insideDropId={dropId}
+                    removeOnDrag={true}
+                  />
+                </div>
+              ) : (
+                <Drag
+                  {...dragElement.props}
+                  insideDropPosition={id}
+                  insideDropId={dropId}
+                  removeOnDrag={true}
+                />
+              )
             ) : null}
           </React.Fragment>
         );

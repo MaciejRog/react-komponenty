@@ -5,6 +5,8 @@ export type TYPE_CONTEXT_STATE = {
     dropPosition: number | null;
     width: number;
     height: number;
+    shiftX: number;
+    shiftY: number;
   };
   drop: {
     props: TYPE_PROPS_DROP | null;
