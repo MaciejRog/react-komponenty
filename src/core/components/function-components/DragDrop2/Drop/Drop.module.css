@@ -1,0 +1,19 @@
+.Drop {
+  margin: 16px;
+  padding: 16px;
+  border: 2px solid black;
+}
+
+.Drop > * {
+  padding: 4px;
+  border: 2px solid black;
+}
+
+:global(.inner-drop-element-active) {
+  padding: 16px;
+  border: 3px solid red;
+}
+:global(.test) {
+  padding: 16px;
+  border: 3px solid green;
+}
