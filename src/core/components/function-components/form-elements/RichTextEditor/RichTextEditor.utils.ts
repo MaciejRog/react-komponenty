@@ -1,3 +1,8 @@
+export const RICH_TEXT_EDITOR_TYPE = {
+  PREVIEW: "PREVIEW",
+  HTML: "HTML",
+};
+
 export const getNearestNotTextElement = (
   node: Node | undefined
 ): HTMLElement | null => {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   getInnerRanges,
   getNearestNotTextElement,
+  RICH_TEXT_EDITOR_TYPE,
 } from "./RichTextEditor.utils";
 import styles from "./RichTextEditor.module.css";
 import RichTextBtnBold from "./elements/RichTextBtn/RichTextBtnBold";
@@ -31,10 +32,11 @@ function RichTextEditor({
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  const [editorType, setEditorType] = useState(RICH_TEXT_EDITOR_TYPE.PREVIEW);
   const [selectedRange, setSelectedRange] = useState<Range | undefined>(
     undefined
   );
-  const [innerValue] = useState(value);
+  const [innerValue, setInnerValue] = useState(value);
 
   useEffect(() => {
     document.addEventListener("selectionchange", handleSelectionChange);
@@ -111,21 +113,59 @@ function RichTextEditor({
         <RichTextBtnColor range={selectedRange} onClick={handleStyleChange} />
         <RichTextBtnImg range={selectedRange} />
       </div>
-      <div
-        ref={htmlEditor}
-        data-rich-text-editor-component="true"
-        style={{
-          minHeight: "26px",
-          padding: "4px",
-          border: "1px solid black",
-          borderRadius: "4px",
-        }}
-        contentEditable="true"
-        spellCheck="true"
-        role="textbox"
-        dangerouslySetInnerHTML={{ __html: innerValue }}
-        onInput={handleValueChange}
-      ></div>
+      <div>
+        <button
+          onClick={() => {
+            setEditorType(RICH_TEXT_EDITOR_TYPE.PREVIEW);
+          }}
+        >
+          PREV
+        </button>
+        <button
+          onClick={() => {
+            setEditorType(RICH_TEXT_EDITOR_TYPE.HTML);
+          }}
+        >
+          HTML
+        </button>
+      </div>
+      <div style={{ position: "relative" }}>
+        <div
+          ref={htmlEditor}
+          data-rich-text-editor-component="true"
+          style={{
+            minHeight: "26px",
+            padding: "4px",
+            border: "1px solid black",
+            borderRadius: "4px",
+          }}
+          contentEditable="true"
+          spellCheck="true"
+          role="textbox"
+          dangerouslySetInnerHTML={{ __html: innerValue }}
+          onInput={handleValueChange}
+        ></div>
+        {editorType === RICH_TEXT_EDITOR_TYPE.HTML ? (
+          <div
+            style={{
+              position: "absolute",
+              top: "0px",
+              left: "0pc",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <textarea
+              style={{ width: "100%", height: "100%", resize: "none" }}
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value);
+                setInnerValue(e.target.value);
+              }}
+            ></textarea>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
