@@ -7,3 +7,9 @@
   box-shadow: 1px 1px 1px 1px black;
   outline: none;
 }
+
+.RichTextBtn:global(.active) {
+  color: white;
+  background-color: black;
+  border: 1px solid rebeccapurple;
+}

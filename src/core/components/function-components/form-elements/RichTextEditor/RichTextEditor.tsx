@@ -29,6 +29,9 @@ function RichTextEditor({
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  const [selectedRange, setSelectedRange] = useState<Range | undefined>(
+    undefined
+  );
   const [innerValue] = useState(value);
 
   useEffect(() => {
@@ -54,6 +57,7 @@ function RichTextEditor({
       range: range,
       nearestWrappingElement: nearestWrappingElement,
     };
+    setSelectedRange(range);
   };
 
   const handleStyleChange =
@@ -96,9 +100,12 @@ function RichTextEditor({
   return (
     <div className={`${styles.RichTextEditor}`}>
       <div className={`${styles.RichTextEditorBtnsWrapper}`}>
-        <RichTextBtnBold onClick={handleStyleChange} />
-        <RichTextBtnUnderline onClick={handleStyleChange} />
-        <RichTextBtnItalic onClick={handleStyleChange} />
+        <RichTextBtnBold range={selectedRange} onClick={handleStyleChange} />
+        <RichTextBtnUnderline
+          range={selectedRange}
+          onClick={handleStyleChange}
+        />
+        <RichTextBtnItalic range={selectedRange} onClick={handleStyleChange} />
         <button
           onClick={() => {
             handleStyleChange("color", "color", (elStyle: any) => {
