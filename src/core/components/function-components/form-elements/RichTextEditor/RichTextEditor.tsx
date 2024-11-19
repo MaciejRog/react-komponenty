@@ -7,6 +7,8 @@ import styles from "./RichTextEditor.module.css";
 import RichTextBtnBold from "./elements/RichTextBtn/RichTextBtnBold";
 import RichTextBtnUnderline from "./elements/RichTextBtn/RichTextBtnUnderline";
 import RichTextBtnItalic from "./elements/RichTextBtn/RichTextBtnItalic";
+import RichTextBtnColor from "./elements/RichTextBtn/RichTextBtnColor";
+import RichTextBtnImg from "./elements/RichTextBtn/RichTextBtnImg";
 
 const INIT_SELECTION_REF: {
   selection: Selection | null;
@@ -106,32 +108,8 @@ function RichTextEditor({
           onClick={handleStyleChange}
         />
         <RichTextBtnItalic range={selectedRange} onClick={handleStyleChange} />
-        <button
-          onClick={() => {
-            handleStyleChange("color", "color", (elStyle: any) => {
-              console.warn("elStyle = ", elStyle);
-              if (elStyle === "rgb(0, 0, 0)") {
-                return "gold";
-              } else {
-                return "rgb(0, 0, 0)";
-              }
-            })();
-          }}
-        >
-          COLOR
-        </button>
-        <button
-          onClick={() => {
-            const img = document.createElement("img");
-            img.style.width = "100%";
-            img.style.height = "auto";
-            img.src =
-              "https://justjoin.it/blog/wp-content/uploads/2018/08/react2.png";
-            selectionRef.current.range?.insertNode(img);
-          }}
-        >
-          IMAGE
-        </button>
+        <RichTextBtnColor range={selectedRange} onClick={handleStyleChange} />
+        <RichTextBtnImg range={selectedRange} />
       </div>
       <div
         ref={htmlEditor}

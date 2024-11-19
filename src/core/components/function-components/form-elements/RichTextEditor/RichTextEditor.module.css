@@ -1,5 +1,6 @@
-.RichTextEditor {
-  /*  */
+.RichTextEditor *[contentEditable="true"],
+.RichTextEditor *[contentEditable="true"] * {
+  user-select: auto;
 }
 
 .RichTextEditorBtnsWrapper {
