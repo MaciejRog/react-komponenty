@@ -110,6 +110,14 @@ function RichTextEditor({
 
   const handleValueChange = () => {
     if (htmlEditor.current && setValue) {
+      if (htmlEditor.current.firstChild?.nodeType === 3) {
+        const tempText = htmlEditor.current.firstChild.textContent;
+        htmlEditor.current.firstChild.remove();
+        const div = document.createElement("div");
+        div.textContent = tempText;
+        htmlEditor.current.prepend(div);
+        window.getSelection()?.setPosition(div, 1);
+      }
       setValue(htmlEditor.current.innerHTML);
     }
   };

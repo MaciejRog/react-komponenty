@@ -212,14 +212,20 @@ function RichTextBtnLine({
           }
         } else {
           const list = document.createElement("ul");
-          if (listEl[0].range.commonAncestorContainer) {
-            const element = getNearestNotTextElement(
-              listEl[0].range.commonAncestorContainer
-            );
+          if (range.endContainer) {
+            const element = getNearestNotTextElement(range.endContainer);
             if (element) {
               element.after(list);
             }
           }
+          // if (listEl[0].range.commonAncestorContainer) {
+          //   const element = getNearestNotTextElement(
+          //     listEl[0].range.commonAncestorContainer
+          //   );
+          //   if (element) {
+          //     element.after(list);
+          //   }
+          // }
           listEl.forEach((element) => {
             const cloneContent = element.range.cloneContents();
             const listItem = document.createElement("li");
