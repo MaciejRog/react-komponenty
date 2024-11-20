@@ -11,6 +11,7 @@ import RichTextBtnItalic from "./elements/RichTextBtn/RichTextBtnItalic";
 import RichTextBtnColor from "./elements/RichTextBtn/RichTextBtnColor";
 import RichTextBtnImg from "./elements/RichTextBtn/RichTextBtnImg";
 import RichTextBtnMail from "./elements/RichTextBtn/RichTextBtnMail";
+import RichTextBtnLine from "./elements/RichTextBtn/RichTextBtnLine";
 
 const INIT_SELECTION_REF: {
   selection: Selection | null;
@@ -35,6 +36,9 @@ function RichTextEditor({
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [editorType, setEditorType] = useState(RICH_TEXT_EDITOR_TYPE.PREVIEW);
+  const [selecteSelection, setSelecteSelection] = useState<Selection | null>(
+    null
+  );
   const [selectedRange, setSelectedRange] = useState<Range | undefined>(
     undefined
   );
@@ -51,19 +55,26 @@ function RichTextEditor({
   const selectionRef = useRef(INIT_SELECTION_REF);
 
   const handleSelectionChange = () => {
-    const selection = document.getSelection();
-    const range = selection?.getRangeAt(0).cloneRange();
-    const commonAncestorContainer = range?.commonAncestorContainer;
-    const nearestWrappingElement = getNearestNotTextElement(
-      commonAncestorContainer
-    );
+    const selection = window.getSelection();
+    if (
+      selection?.rangeCount &&
+      selection?.rangeCount > 0 &&
+      selection?.getRangeAt?.(0)
+    ) {
+      const range = selection.getRangeAt(0).cloneRange();
+      const commonAncestorContainer = range?.commonAncestorContainer;
+      const nearestWrappingElement = getNearestNotTextElement(
+        commonAncestorContainer
+      );
 
-    selectionRef.current = {
-      selection: selection,
-      range: range,
-      nearestWrappingElement: nearestWrappingElement,
-    };
-    setSelectedRange(range);
+      selectionRef.current = {
+        selection: selection,
+        range: range,
+        nearestWrappingElement: nearestWrappingElement,
+      };
+      setSelectedRange(range);
+      setSelecteSelection(selection);
+    }
   };
 
   const handleStyleChange =
@@ -119,6 +130,10 @@ function RichTextEditor({
         />
         <RichTextBtnMail
           range={selectedRange}
+          handleUpdate={handleValueChange}
+        />
+        <RichTextBtnLine
+          selection={selecteSelection}
           handleUpdate={handleValueChange}
         />
       </div>
