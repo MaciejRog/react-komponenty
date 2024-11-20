@@ -10,6 +10,7 @@ import RichTextBtnUnderline from "./elements/RichTextBtn/RichTextBtnUnderline";
 import RichTextBtnItalic from "./elements/RichTextBtn/RichTextBtnItalic";
 import RichTextBtnColor from "./elements/RichTextBtn/RichTextBtnColor";
 import RichTextBtnImg from "./elements/RichTextBtn/RichTextBtnImg";
+import RichTextBtnMail from "./elements/RichTextBtn/RichTextBtnMail";
 
 const INIT_SELECTION_REF: {
   selection: Selection | null;
@@ -23,6 +24,7 @@ const INIT_SELECTION_REF: {
 
 /*
 obsługa LIST (ul, ol)
+obsługa mailTo
 */
 
 function RichTextEditor({
@@ -112,6 +114,7 @@ function RichTextEditor({
         <RichTextBtnItalic range={selectedRange} onClick={handleStyleChange} />
         <RichTextBtnColor range={selectedRange} onClick={handleStyleChange} />
         <RichTextBtnImg range={selectedRange} />
+        <RichTextBtnMail range={selectedRange} />
       </div>
       <div>
         <button
