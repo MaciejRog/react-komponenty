@@ -85,47 +85,57 @@ export const getInnerRanges = (
 export const getOuterRanges = (range: Range | undefined) => {
   const ranges: Range[] = [];
   let canAdd = false;
-  if (range) {
-    const getRichTextEditorChild = (node: Node): Node | null => {
-      let elementToReturn: Node | null = null;
 
-      const checkElement = (element: Node | null) => {
-        if (element && element.parentElement) {
-          if (
-            element.parentElement.dataset.richTextEditorComponent === "true"
-          ) {
-            elementToReturn = element;
-          } else {
-            checkElement(node.parentNode);
-          }
-        }
-      };
-      checkElement(node);
-      return elementToReturn;
-    };
-
-    const firstRangeOuterElement = getRichTextEditorChild(range.startContainer);
-    const lastRangeOuterElement = getRichTextEditorChild(range.endContainer);
-
-    if (firstRangeOuterElement && lastRangeOuterElement) {
-      const richTextEditorElement = firstRangeOuterElement.parentElement;
-      if (richTextEditorElement) {
-        richTextEditorElement.childNodes.forEach((child) => {
-          if (child === firstRangeOuterElement) {
-            canAdd = true;
-          }
-          if (canAdd) {
-            const newRange = new Range();
-            newRange.selectNode(child);
-            ranges.push(newRange);
-          }
-          if (child === lastRangeOuterElement) {
-            canAdd = false;
-          }
+  const doesNodeContain = (nodeToCheck: Node, nodeToContain: Node) => {
+    let contain = false;
+    const check = (node: Node) => {
+      if (node === nodeToContain) {
+        contain = true;
+      } else {
+        node.childNodes.forEach((childNode) => {
+          check(childNode);
         });
       }
-    }
+    };
+    check(nodeToCheck);
+
+    return contain;
+  };
+
+  if (range) {
+    range.commonAncestorContainer.childNodes.forEach((childNode) => {
+      if (childNode.textContent?.trim()) {
+        if (doesNodeContain(childNode, range.startContainer)) {
+          canAdd = true;
+        }
+        if (canAdd) {
+          const newRange = new Range();
+          newRange.selectNode(childNode);
+          ranges.push(newRange);
+        }
+        if (doesNodeContain(childNode, range.endContainer)) {
+          canAdd = false;
+        }
+      }
+    });
   }
 
   return ranges;
+};
+
+export const isInRichTextEditor = (element: HTMLElement | null) => {
+  let isInReturn = false;
+
+  const search = (el: HTMLElement | null) => {
+    if (el) {
+      if (el.dataset.richTextEditorComponent) {
+        isInReturn = true;
+      } else {
+        search(el.parentElement);
+      }
+    }
+  };
+  search(element);
+
+  return isInReturn;
 };

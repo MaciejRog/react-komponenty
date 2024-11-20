@@ -1,7 +1,13 @@
 import { useState } from "react";
 import styles from "./RichTextBtn.module.css";
 
-function RichTextBtnImg({ range }: { range: Range | undefined }) {
+function RichTextBtnImg({
+  range,
+  handleUpdate,
+}: {
+  range: Range | undefined;
+  handleUpdate: Function;
+}) {
   const [active, setActive] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +33,7 @@ function RichTextBtnImg({ range }: { range: Range | undefined }) {
           img.src = data as string;
           range?.insertNode(img);
           setActive(false);
+          handleUpdate();
         })
         .catch((err) => {
           console.error("ERROR = ", err);
@@ -46,11 +53,14 @@ function RichTextBtnImg({ range }: { range: Range | undefined }) {
       </div>
       <div
         style={{
+          zIndex: "100",
           overflow: "hidden",
           position: "absolute",
           top: "100%",
           left: "0px",
+          padding: "4px",
           backgroundColor: "#fff",
+          border: "1px solid black",
           transform: `scaleY(${active ? "1" : "0"})`,
           transformOrigin: "50% 0%",
           transition: "0.3s all linear",

@@ -113,8 +113,14 @@ function RichTextEditor({
         />
         <RichTextBtnItalic range={selectedRange} onClick={handleStyleChange} />
         <RichTextBtnColor range={selectedRange} onClick={handleStyleChange} />
-        <RichTextBtnImg range={selectedRange} />
-        <RichTextBtnMail range={selectedRange} />
+        <RichTextBtnImg
+          range={selectedRange}
+          handleUpdate={handleValueChange}
+        />
+        <RichTextBtnMail
+          range={selectedRange}
+          handleUpdate={handleValueChange}
+        />
       </div>
       <div>
         <button

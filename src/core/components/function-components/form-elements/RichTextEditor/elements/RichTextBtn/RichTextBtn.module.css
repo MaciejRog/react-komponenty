@@ -8,6 +8,11 @@
   outline: none;
 }
 
+.RichTextBtn:hover {
+  cursor: pointer;
+  transform: scale(1.01);
+}
+
 .RichTextBtn:global(.active) {
   color: white;
   background-color: black;
