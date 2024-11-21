@@ -42,42 +42,40 @@ function RichTextBtnImg({
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div className={`${styles.RichTextBtnImg}`}>
       <div
         className={`${styles.RichTextBtn}`}
         onClick={() => {
           setActive(true);
         }}
       >
-        Image
+        IMG
       </div>
+
       <div
+        className={`${styles.RichTextBtnDialog}`}
         style={{
-          zIndex: "100",
-          overflow: "hidden",
-          position: "absolute",
-          top: "100%",
-          left: "0px",
-          padding: "4px",
-          backgroundColor: "#fff",
-          border: "1px solid black",
           transform: `scaleY(${active ? "1" : "0"})`,
-          transformOrigin: "50% 0%",
-          transition: "0.3s all linear",
         }}
       >
-        <div
-          onClick={() => {
-            setActive(false);
-          }}
-        >
-          X
+        <label>
+          <span>Wybierz zdjęcie z dysku</span>
+          <input
+            type="file"
+            accept="image/*, .png, .jpg, .jpeg"
+            onChange={handleChange}
+          />
+        </label>
+        <div className={`${styles.RichTextBtnDialogBtnCloseWrapper}`}>
+          <div
+            className={`${styles.RichTextBtnDialogBtnClose}`}
+            onClick={() => {
+              setActive(false);
+            }}
+          >
+            x
+          </div>
         </div>
-        <input
-          type="file"
-          accept="image/*, .png, .jpg, .jpeg"
-          onChange={handleChange}
-        />
       </div>
     </div>
   );

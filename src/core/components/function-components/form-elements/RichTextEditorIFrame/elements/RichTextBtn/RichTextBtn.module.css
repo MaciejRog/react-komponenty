@@ -25,6 +25,49 @@
   border: 1px solid rgba(66, 68, 90, 1);
 }
 
+.RichTextBtnDialog {
+  z-index: 100;
+  overflow: hidden;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 4px;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 0px 8px 8px 8px;
+  transform-origin: 50% 0%;
+  transition: 0.3s all linear;
+}
+
+.RichTextBtnDialogBtnCloseWrapper {
+  position: relative;
+}
+
+.RichTextBtnDialogBtnClose {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 50%;
+  transition: 0.3s all linear;
+}
+
+.RichTextBtnDialogBtnClose:hover {
+  color: #fff;
+  background-color: #000;
+}
+
 .RichTextBtnColor input {
   cursor: pointer;
   width: 24px;
@@ -50,4 +93,32 @@
   outline: none;
   border: 1px solid #000;
   border-radius: 4px;
+}
+
+.RichTextBtnImg {
+  position: relative;
+}
+
+.RichTextBtnImg label {
+  cursor: pointer;
+  display: block;
+  padding: 4px;
+  background-color: #d5d5d5;
+  border-radius: 8px;
+}
+
+.RichTextBtnImg input {
+  overflow: hidden !important;
+  width: 0px !important;
+  height: 0px !important;
+  visibility: hidden !important;
+}
+
+.RichTextBtnMail {
+  position: relative;
+}
+
+.RichTextBtnMail input {
+  border: 1px solid #000;
+  outline: none;
 }

@@ -106,37 +106,34 @@ function RichTextBtnMail({
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div
+      className={`${styles.RichTextBtnMail}`}
+      style={{ position: "relative" }}
+    >
       <div className={`${styles.RichTextBtn}`} onClick={hanldeMail}>
         @
       </div>
       <div
+        className={`${styles.RichTextBtnDialog}`}
         style={{
-          zIndex: "100",
-          overflow: "hidden",
-          position: "absolute",
-          top: "100%",
-          left: "0px",
-          padding: "4px",
-          backgroundColor: "#fff",
-          border: "1px solid black",
           transform: `scaleY(${active ? "1" : "0"})`,
-          transformOrigin: "50% 0%",
-          transition: "0.3s all linear",
         }}
       >
-        <div
-          onClick={() => {
-            setActive(false);
-          }}
-        >
-          X
-        </div>
         <input
           type="text"
           value={anchorMail}
           onChange={handleChangeMailValue}
         />
+        <div className={`${styles.RichTextBtnDialogBtnCloseWrapper}`}>
+          <div
+            className={`${styles.RichTextBtnDialogBtnClose}`}
+            onClick={() => {
+              setActive(false);
+            }}
+          >
+            x
+          </div>
+        </div>
       </div>
     </div>
   );

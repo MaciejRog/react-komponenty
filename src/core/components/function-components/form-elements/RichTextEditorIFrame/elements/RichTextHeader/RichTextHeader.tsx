@@ -21,7 +21,7 @@ function RichTextHeader({
 }) {
   const range =
     selection?.rangeCount && selection?.rangeCount > 0
-      ? selection?.getRangeAt(0).cloneRange()
+      ? selection?.getRangeAt(0)
       : undefined;
 
   const handleStyleChange =
