@@ -9,10 +9,14 @@ export const getNearestNotTextElement = (
   let elementToReturn: HTMLElement | null = null;
   const getNotTextElement = (nodeEl: Node | undefined | HTMLElement | null) => {
     if (nodeEl) {
-      if (nodeEl.nodeName === "#text") {
-        getNotTextElement(nodeEl.parentElement);
+      if (nodeEl.nodeName === "#document") {
+        elementToReturn = null;
       } else {
-        elementToReturn = nodeEl as HTMLElement;
+        if (nodeEl.nodeName === "#text") {
+          getNotTextElement(nodeEl.parentElement);
+        } else {
+          elementToReturn = nodeEl as HTMLElement;
+        }
       }
     }
   };

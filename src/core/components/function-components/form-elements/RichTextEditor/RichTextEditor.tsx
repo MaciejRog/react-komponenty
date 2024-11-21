@@ -12,6 +12,7 @@ import RichTextBtnColor from "./elements/RichTextBtn/RichTextBtnColor";
 import RichTextBtnImg from "./elements/RichTextBtn/RichTextBtnImg";
 import RichTextBtnMail from "./elements/RichTextBtn/RichTextBtnMail";
 import RichTextBtnList from "./elements/RichTextBtn/RichTextBtnList";
+import RichTextBtnFontSize from "./elements/RichTextBtn/RichTextBtnFontSize";
 
 const INIT_SELECTION_REF: {
   selection: Selection | null;
@@ -127,6 +128,10 @@ function RichTextEditor({
         />
         <RichTextBtnItalic range={selectedRange} onClick={handleStyleChange} />
         <RichTextBtnColor range={selectedRange} onClick={handleStyleChange} />
+        <RichTextBtnFontSize
+          selection={selecteSelection}
+          handleUpdate={handleValueChange}
+        />
         <RichTextBtnImg
           range={selectedRange}
           handleUpdate={handleValueChange}
