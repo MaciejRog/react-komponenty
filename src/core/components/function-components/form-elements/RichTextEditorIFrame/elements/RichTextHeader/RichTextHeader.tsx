@@ -21,7 +21,7 @@ function RichTextHeader({
 }) {
   const range =
     selection?.rangeCount && selection?.rangeCount > 0
-      ? selection?.getRangeAt(0)
+      ? selection?.getRangeAt(0).cloneRange()
       : undefined;
 
   const handleStyleChange =
@@ -47,11 +47,11 @@ function RichTextHeader({
               if (clone.textContent === nearestElement.innerHTML) {
                 nearestElement.style[elementStyleName] = newValue;
               } else {
-                const boldElement = document.createElement("span");
-                boldElement.style[elementStyleName] = newValue;
-                boldElement.appendChild(clone);
+                const wrapperElement = document.createElement("span");
+                wrapperElement.style[elementStyleName] = newValue;
+                wrapperElement.appendChild(clone);
                 rangeEl?.extractContents();
-                rangeEl?.insertNode(boldElement);
+                rangeEl?.insertNode(wrapperElement);
               }
 
               updateValue();

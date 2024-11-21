@@ -41,6 +41,7 @@ function RichTextEditor({
     if (iframeWindowRef.current) {
       const selection = iframeWindowRef.current.getSelection();
       setIframeSelection(selection);
+      setRefresh((prev) => !prev);
     }
   };
 

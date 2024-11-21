@@ -1,10 +1,16 @@
 .RichTextBtn {
   padding: 4px;
-  color: black;
-  background-color: white;
-  border: 1px solid black;
+  min-width: 24px;
+  min-height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #000;
   border-radius: 4px;
-  box-shadow: 1px 1px 1px 1px black;
+  box-shadow: 2px 2px 25px -10px rgba(66, 68, 90, 1);
   outline: none;
 }
 
@@ -14,7 +20,34 @@
 }
 
 .RichTextBtn:global(.active) {
-  color: white;
-  background-color: black;
-  border: 1px solid rebeccapurple;
+  color: #fff;
+  background-color: #000;
+  border: 1px solid rgba(66, 68, 90, 1);
+}
+
+.RichTextBtnColor input {
+  cursor: pointer;
+  width: 24px;
+  height: 16px;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  border: none;
+  border-radius: 8px;
+}
+
+.RichTextBtnFontSize label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.RichTextBtnFontSize label input {
+  cursor: pointer;
+  padding: 0px 0px 0px 4px !important;
+  width: 48px;
+  outline: none;
+  border: 1px solid #000;
+  border-radius: 4px;
 }

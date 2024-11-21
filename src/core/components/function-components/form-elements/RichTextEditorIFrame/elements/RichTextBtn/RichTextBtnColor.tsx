@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./RichTextBtn.module.css";
 import { getNearestNotTextElement } from "../../RichTextEditor.utils";
 
@@ -44,6 +44,14 @@ function RichTextBtnColor({
     }
   }, [range]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setValue(value);
@@ -53,9 +61,17 @@ function RichTextBtnColor({
   };
 
   return (
-    <div className={`${styles.RichTextBtn}`}>
-      color
-      <input type="color" value={value} onChange={handleChange} />
+    <div
+      className={`${styles.RichTextBtn} ${styles.RichTextBtnColor}`}
+      onClick={handleClick}
+    >
+      <div>color</div>
+      <input
+        ref={inputRef}
+        type="color"
+        value={value}
+        onChange={handleChange}
+      />
     </div>
   );
 }

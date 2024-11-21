@@ -143,22 +143,3 @@ export const isInRichTextEditor = (element: HTMLElement | null) => {
 
   return isInReturn;
 };
-
-// export const nodeContainsNode = (nodeToCheck: Node, nodeToContain: Node) => {
-//   let contain = false;
-
-//   const check = (node: Node) => {
-//     if (node === nodeToContain) {
-//       contain = true;
-//     } else {
-//       if (node.childNodes.length > 0) {
-//         node.childNodes.forEach((child) => {
-//           check(child);
-//         });
-//       }
-//     }
-//   };
-//   check(nodeToCheck);
-
-//   return contain;
-// };

@@ -19,7 +19,10 @@ function RichTextBtnFontSize({
   const selectionString = selection?.toString();
 
   useEffect(() => {
-    const range = selection?.getRangeAt(0);
+    const range =
+      selection?.rangeCount && selection?.rangeCount > 0
+        ? selection?.getRangeAt(0).cloneRange()
+        : undefined;
     const firstSelectedElement = getNearestNotTextElement(
       range?.startContainer
     );
@@ -63,7 +66,7 @@ function RichTextBtnFontSize({
   };
 
   return (
-    <div className={`${styles.RichTextBtn}`}>
+    <div className={`${styles.RichTextBtn} ${styles.RichTextBtnFontSize}`}>
       <div>H</div>
       <label>
         <input type="number" value={value} onChange={handleChange} />
