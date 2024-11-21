@@ -1,14 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { RICH_TEXT_EDITOR_TYPE } from "./RichTextEditor.utils";
 import styles from "./RichTextEditor.module.css";
-import { renderToString } from "react-dom/server";
 import RichTextHeader from "./elements/RichTextHeader/RichTextHeader";
 import RichTextTypeSelector from "./elements/RichTextTypeSelector/RichTextTypeSelector";
-
-const STYLES = {
-  width: "100%",
-  height: "100%",
-};
+import { createPortal } from "react-dom";
 
 function RichTextEditor({
   value = ``,
@@ -40,7 +35,7 @@ function RichTextEditor({
   }, [handleRefs]);
 
   const iframeWindowRef = useRef<Window | null>(null);
-  const htmlEditor = useRef<HTMLElement | null>(null);
+  const htmlEditor = useRef<HTMLDivElement | null>(null);
 
   const handleSelectionChange = () => {
     if (iframeWindowRef.current) {
@@ -57,7 +52,7 @@ function RichTextEditor({
         const div = document.createElement("div");
         div.textContent = tempText;
         htmlEditor.current.prepend(div);
-        window.getSelection()?.setPosition(div, 1);
+        selecteSelection?.setPosition(div, 1);
       }
       setValue(htmlEditor.current.innerHTML);
     }
@@ -83,27 +78,24 @@ function RichTextEditor({
             onLoad={(e) => {
               const iframe = e.target as HTMLIFrameElement;
               iframeWindowRef.current = iframe.contentWindow;
-              const element = iframe.contentWindow?.document?.querySelector(
-                'div[data-rich-text-editor-component="true"]'
-              );
-              if (element) {
-                htmlEditor.current = element as HTMLElement;
-                element.addEventListener("input", updateValue);
-              }
               setHandleRefs((prev) => !prev);
             }}
-            srcDoc={renderToString(
+            src="./RichTextEditor.html"
+          ></iframe>
+          {iframeWindowRef.current?.document?.body &&
+            createPortal(
               <div
-                // className={`RichTextEditorContentTypePreviewField`}
-                style={STYLES}
+                ref={htmlEditor}
+                className={`RichTextEditorContentTypePreviewField`}
                 data-rich-text-editor-component="true"
                 contentEditable="true"
                 spellCheck="true"
                 role="textbox"
                 dangerouslySetInnerHTML={{ __html: innerValue }}
-              ></div>
+                onInput={updateValue}
+              ></div>,
+              iframeWindowRef.current.document.body
             )}
-          ></iframe>
           {editorType === RICH_TEXT_EDITOR_TYPE.HTML ? (
             <div className={`${styles.RichTextEditorContentTypeHTML}`}>
               <textarea
