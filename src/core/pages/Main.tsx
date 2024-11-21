@@ -3,7 +3,8 @@
 // import ExampleDragDrop2 from "../components/function-components/DragDrop2/_EXAMPLE/ExampleDragDrop2";
 
 import { useState } from "react";
-import RichTextEditor from "../components/function-components/form-elements/RichTextEditor/RichTextEditor";
+// import RichTextEditor from "../components/function-components/form-elements/RichTextEditor/RichTextEditor";
+import RichTextEditor from "../components/function-components/form-elements/RichTextEditorIFrame/RichTextEditor";
 
 function Main() {
   // const [textValue, setTextValue] = useState(`

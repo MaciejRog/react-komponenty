@@ -1,0 +1,12 @@
+.RichTextEditor *[contentEditable="true"],
+.RichTextEditor *[contentEditable="true"] * {
+  user-select: auto;
+}
+
+.RichTextEditorBtnsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+}

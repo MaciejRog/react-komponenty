@@ -1,0 +1,20 @@
+.RichTextBtn {
+  padding: 4px;
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 4px;
+  box-shadow: 1px 1px 1px 1px black;
+  outline: none;
+}
+
+.RichTextBtn:hover {
+  cursor: pointer;
+  transform: scale(1.01);
+}
+
+.RichTextBtn:global(.active) {
+  color: white;
+  background-color: black;
+  border: 1px solid rebeccapurple;
+}
