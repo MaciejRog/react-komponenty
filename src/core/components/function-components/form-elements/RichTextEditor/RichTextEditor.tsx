@@ -11,7 +11,7 @@ import RichTextBtnItalic from "./elements/RichTextBtn/RichTextBtnItalic";
 import RichTextBtnColor from "./elements/RichTextBtn/RichTextBtnColor";
 import RichTextBtnImg from "./elements/RichTextBtn/RichTextBtnImg";
 import RichTextBtnMail from "./elements/RichTextBtn/RichTextBtnMail";
-import RichTextBtnLine from "./elements/RichTextBtn/RichTextBtnLine";
+import RichTextBtnList from "./elements/RichTextBtn/RichTextBtnList";
 
 const INIT_SELECTION_REF: {
   selection: Selection | null;
@@ -22,11 +22,6 @@ const INIT_SELECTION_REF: {
   range: undefined,
   nearestWrappingElement: null,
 };
-
-/*
-obsługa LIST (ul, ol)
-obsługa mailTo
-*/
 
 function RichTextEditor({
   value = ``,
@@ -140,7 +135,7 @@ function RichTextEditor({
           range={selectedRange}
           handleUpdate={handleValueChange}
         />
-        <RichTextBtnLine
+        <RichTextBtnList
           selection={selecteSelection}
           handleUpdate={handleValueChange}
         />

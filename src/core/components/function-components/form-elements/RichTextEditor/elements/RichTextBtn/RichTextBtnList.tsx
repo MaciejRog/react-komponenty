@@ -122,7 +122,7 @@ type typeListElement = {
   isLastItem: false;
 };
 
-function RichTextBtnLine({
+function RichTextBtnList({
   selection,
   handleUpdate,
 }: {
@@ -173,19 +173,32 @@ function RichTextBtnLine({
       listElements.forEach((element) => {
         if (listElementsByList.length === 0) {
           listElementsByList.push([]);
-          listElementsByList[listElementsByList.length - 1].push(element);
+          listElementsByList[0].push(element);
         } else {
-          if (
-            listElementsByList[listElementsByList.length - 1][0].list ===
-            element.list
-          ) {
-            listElementsByList[listElementsByList.length - 1].push(element);
+          let listIndex = -1;
+          listElementsByList.forEach((listEl, index) => {
+            if (listEl?.[0]?.list === element.list) {
+              listIndex = index;
+            }
+          });
+          if (listIndex > -1) {
+            let listItemIndex = -1;
+            listElementsByList[listIndex].forEach((el, index) => {
+              if (el.listItem === element.listItem) {
+                listItemIndex = index;
+              }
+            });
+            if (listItemIndex === -1) {
+              listElementsByList[listIndex].push(element);
+            }
           } else {
             listElementsByList.push([]);
             listElementsByList[listElementsByList.length - 1].push(element);
           }
         }
       });
+
+      console.warn("listElementsByList = ", listElementsByList);
 
       listElementsByList.reverse().forEach((listEl) => {
         if (listEl[0].list) {
@@ -218,14 +231,6 @@ function RichTextBtnLine({
               element.after(list);
             }
           }
-          // if (listEl[0].range.commonAncestorContainer) {
-          //   const element = getNearestNotTextElement(
-          //     listEl[0].range.commonAncestorContainer
-          //   );
-          //   if (element) {
-          //     element.after(list);
-          //   }
-          // }
           listEl.forEach((element) => {
             const cloneContent = element.range.cloneContents();
             const listItem = document.createElement("li");
@@ -248,4 +253,4 @@ function RichTextBtnLine({
   );
 }
 
-export default RichTextBtnLine;
+export default RichTextBtnList;
