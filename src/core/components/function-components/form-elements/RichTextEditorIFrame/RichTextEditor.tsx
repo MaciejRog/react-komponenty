@@ -1,28 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  getInnerRanges,
-  getNearestNotTextElement,
-  RICH_TEXT_EDITOR_TYPE,
-} from "./RichTextEditor.utils";
+import { RICH_TEXT_EDITOR_TYPE } from "./RichTextEditor.utils";
 import styles from "./RichTextEditor.module.css";
-import RichTextBtnBold from "./elements/RichTextBtn/RichTextBtnBold";
-import RichTextBtnUnderline from "./elements/RichTextBtn/RichTextBtnUnderline";
-import RichTextBtnItalic from "./elements/RichTextBtn/RichTextBtnItalic";
-import RichTextBtnColor from "./elements/RichTextBtn/RichTextBtnColor";
-import RichTextBtnImg from "./elements/RichTextBtn/RichTextBtnImg";
-import RichTextBtnMail from "./elements/RichTextBtn/RichTextBtnMail";
-import RichTextBtnList from "./elements/RichTextBtn/RichTextBtnList";
-import RichTextBtnFontSize from "./elements/RichTextBtn/RichTextBtnFontSize";
 import { renderToString } from "react-dom/server";
+import RichTextHeader from "./elements/RichTextHeader/RichTextHeader";
+import RichTextTypeSelector from "./elements/RichTextTypeSelector/RichTextTypeSelector";
 
-const INIT_SELECTION_REF: {
-  selection: Selection | null;
-  range: Range | undefined;
-  nearestWrappingElement: HTMLElement | null;
-} = {
-  selection: null,
-  range: undefined,
-  nearestWrappingElement: null,
+const STYLES = {
+  width: "100%",
+  height: "100%",
 };
 
 function RichTextEditor({
@@ -37,9 +22,6 @@ function RichTextEditor({
   const [selecteSelection, setSelecteSelection] = useState<Selection | null>(
     null
   );
-  const [selectedRange, setSelectedRange] = useState<Range | undefined>(
-    undefined
-  );
   const [innerValue, setInnerValue] = useState(value);
 
   useEffect(() => {
@@ -47,7 +29,6 @@ function RichTextEditor({
     if (iframeDocument) {
       iframeDocument.addEventListener("selectionchange", handleSelectionChange);
     }
-
     return () => {
       if (iframeDocument) {
         iframeDocument.removeEventListener(
@@ -59,68 +40,16 @@ function RichTextEditor({
   }, [handleRefs]);
 
   const iframeWindowRef = useRef<Window | null>(null);
-  const richEditorRef = useRef<HTMLDivElement>(null);
-  const selectionRef = useRef(INIT_SELECTION_REF);
   const htmlEditor = useRef<HTMLElement | null>(null);
 
   const handleSelectionChange = () => {
-    console.warn("HANDLE_SELECTION_CHANGE");
     if (iframeWindowRef.current) {
       const selection = iframeWindowRef.current.getSelection();
-      if (
-        selection?.rangeCount &&
-        selection?.rangeCount > 0 &&
-        selection?.getRangeAt?.(0)
-      ) {
-        const range = selection.getRangeAt(0).cloneRange();
-        const commonAncestorContainer = range?.commonAncestorContainer;
-        const nearestWrappingElement = getNearestNotTextElement(
-          commonAncestorContainer
-        );
-
-        selectionRef.current = {
-          selection: selection,
-          range: range,
-          nearestWrappingElement: nearestWrappingElement,
-        };
-        setSelectedRange(range);
-        setSelecteSelection(selection);
-      }
+      setSelecteSelection(selection);
     }
   };
 
-  const handleStyleChange =
-    (elementStyleName: any, computedStyleName: any, calcValue: any) =>
-    (): void => {
-      const { range, nearestWrappingElement } = selectionRef.current;
-      if (range) {
-        const ranges = getInnerRanges(range, nearestWrappingElement);
-        ranges.forEach((rangeEl) => {
-          const clone = rangeEl.cloneContents();
-          const nearestElement = getNearestNotTextElement(
-            rangeEl.startContainer
-          );
-          if (nearestElement) {
-            const style =
-              getComputedStyle(nearestElement)[computedStyleName as number];
-            const newValue = calcValue(style);
-            if (clone.textContent === nearestElement.innerHTML) {
-              nearestElement.style[elementStyleName] = newValue;
-            } else {
-              const boldElement = document.createElement("span");
-              boldElement.style[elementStyleName] = newValue;
-              boldElement.appendChild(clone);
-              rangeEl?.extractContents();
-              rangeEl?.insertNode(boldElement);
-            }
-
-            handleValueChange();
-          }
-        });
-      }
-    };
-
-  const handleValueChange = () => {
+  const updateValue = () => {
     if (htmlEditor.current && setValue) {
       if (htmlEditor.current.firstChild?.nodeType === 3) {
         const tempText = htmlEditor.current.firstChild.textContent;
@@ -135,107 +64,63 @@ function RichTextEditor({
   };
 
   return (
-    <div ref={richEditorRef} className={`${styles.RichTextEditor}`}>
-      <div className={`${styles.RichTextEditorBtnsWrapper}`}>
-        <RichTextBtnBold range={selectedRange} onClick={handleStyleChange} />
-        <RichTextBtnUnderline
-          range={selectedRange}
-          onClick={handleStyleChange}
-        />
-        <RichTextBtnItalic range={selectedRange} onClick={handleStyleChange} />
-        <RichTextBtnColor range={selectedRange} onClick={handleStyleChange} />
-        <RichTextBtnFontSize
+    <div className={`${styles.RichTextEditor}`}>
+      <div
+        style={{
+          visibility:
+            editorType === RICH_TEXT_EDITOR_TYPE.HTML ? "hidden" : "visible",
+        }}
+      >
+        <RichTextHeader
           selection={selecteSelection}
-          handleUpdate={handleValueChange}
-        />
-        <RichTextBtnImg
-          range={selectedRange}
-          handleUpdate={handleValueChange}
-        />
-        <RichTextBtnMail
-          range={selectedRange}
-          handleUpdate={handleValueChange}
-        />
-        <RichTextBtnList
-          listType="OL"
-          selection={selecteSelection}
-          handleUpdate={handleValueChange}
-        />
-        <RichTextBtnList
-          listType="UL"
-          selection={selecteSelection}
-          handleUpdate={handleValueChange}
+          updateValue={updateValue}
         />
       </div>
-      <div>
-        <button
-          onClick={() => {
-            setEditorType(RICH_TEXT_EDITOR_TYPE.PREVIEW);
-          }}
-        >
-          PREV
-        </button>
-        <button
-          onClick={() => {
-            setEditorType(RICH_TEXT_EDITOR_TYPE.HTML);
-          }}
-        >
-          HTML
-        </button>
-      </div>
-      <div style={{ position: "relative" }}>
-        <iframe
-          style={{
-            width: "100%",
-            minHeight: "600px",
-          }}
-          onLoad={(e) => {
-            const iframe = e.target as HTMLIFrameElement;
-            iframeWindowRef.current = iframe.contentWindow;
-            const element = iframe.contentWindow?.document?.querySelector(
-              'div[data-rich-text-editor-component="true"]'
-            );
-            if (element) {
-              htmlEditor.current = element as HTMLElement;
-            }
-            setHandleRefs((prev) => !prev);
-          }}
-          srcDoc={renderToString(
-            <div
-              data-rich-text-editor-component="true"
-              style={{
-                minHeight: "26px",
-                padding: "4px",
-                border: "1px solid black",
-                borderRadius: "4px",
-              }}
-              contentEditable="true"
-              spellCheck="true"
-              role="textbox"
-              dangerouslySetInnerHTML={{ __html: innerValue }}
-            ></div>
-          )}
-        ></iframe>
-        {editorType === RICH_TEXT_EDITOR_TYPE.HTML ? (
-          <div
-            style={{
-              position: "absolute",
-              top: "0px",
-              left: "0pc",
-              width: "100%",
-              height: "100%",
+      <div className={`${styles.RichTextEditorContentWrapper}`}>
+        <div className={`${styles.RichTextEditorContent}`}>
+          <iframe
+            className={`${styles.RichTextEditorContentTypePreview}`}
+            onLoad={(e) => {
+              const iframe = e.target as HTMLIFrameElement;
+              iframeWindowRef.current = iframe.contentWindow;
+              const element = iframe.contentWindow?.document?.querySelector(
+                'div[data-rich-text-editor-component="true"]'
+              );
+              if (element) {
+                htmlEditor.current = element as HTMLElement;
+                element.addEventListener("input", updateValue);
+              }
+              setHandleRefs((prev) => !prev);
             }}
-          >
-            <textarea
-              style={{ width: "100%", height: "100%", resize: "none" }}
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value);
-                setInnerValue(e.target.value);
-              }}
-            ></textarea>
-          </div>
-        ) : null}
+            srcDoc={renderToString(
+              <div
+                // className={`RichTextEditorContentTypePreviewField`}
+                style={STYLES}
+                data-rich-text-editor-component="true"
+                contentEditable="true"
+                spellCheck="true"
+                role="textbox"
+                dangerouslySetInnerHTML={{ __html: innerValue }}
+              ></div>
+            )}
+          ></iframe>
+          {editorType === RICH_TEXT_EDITOR_TYPE.HTML ? (
+            <div className={`${styles.RichTextEditorContentTypeHTML}`}>
+              <textarea
+                className={`${styles.RichTextEditorContentTypeHTMLField}`}
+                value={value}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                  setInnerValue(e.target.value);
+                }}
+              ></textarea>
+            </div>
+          ) : null}
+        </div>
+        <RichTextTypeSelector
+          editorType={editorType}
+          setEditorType={setEditorType}
+        />
       </div>
     </div>
   );

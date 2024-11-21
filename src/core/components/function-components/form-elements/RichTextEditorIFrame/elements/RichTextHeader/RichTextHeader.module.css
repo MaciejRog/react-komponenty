@@ -1,0 +1,7 @@
+.RichTextHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 4px;
+  column-gap: 6px;
+}

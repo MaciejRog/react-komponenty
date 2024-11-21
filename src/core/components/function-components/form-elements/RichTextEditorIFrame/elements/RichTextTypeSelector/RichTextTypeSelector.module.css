@@ -1,0 +1,25 @@
+.RichTextTypeSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.RichTextTypeSelectorBtn {
+  cursor: pointer;
+  color: #000;
+  background-color: #fff;
+  outline: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 2px 2px 25px -10px rgba(66, 68, 90, 1);
+  transition: 0.3s all linear;
+}
+
+.RichTextTypeSelectorBtn:hover {
+  border-color: #000;
+}
+
+.RichTextTypeSelectorBtn:global(.active) {
+  color: #fff;
+  background-color: #000;
+}

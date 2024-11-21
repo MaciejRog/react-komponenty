@@ -44,7 +44,13 @@ function Main() {
       {/* <ExampleAnimation /> */}
       {/* <ExampleDragDrop /> */}
       {/* <ExampleDragDrop2 /> */}
-      <RichTextEditor value={textValue} setValue={setTextValue} />
+      <div
+        style={{
+          margin: "16px",
+        }}
+      >
+        <RichTextEditor value={textValue} setValue={setTextValue} />
+      </div>
     </div>
   );
 }

@@ -1,12 +1,46 @@
-.RichTextEditor *[contentEditable="true"],
-.RichTextEditor *[contentEditable="true"] * {
-  user-select: auto;
+.RichTextEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.RichTextEditorBtnsWrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+.RichTextEditorContentWrapper {
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 4px;
+}
+
+.RichTextEditorContent {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+}
+
+.RichTextEditorContentTypePreview {
+  width: 100%;
+  height: 100%;
+  outline: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+}
+
+/* div:global(.RichTextEditorContentTypePreviewField) {
+  min-height: 26px;
+  padding: 4px;
+  border: 1px solid #000;
+  border-radius: 4px;
+} */
+
+.RichTextEditorContentTypeHTML {
+  position: absolute;
+  top: 0px;
+  left: 0pc;
+  width: 100%;
+  height: 100%;
+}
+
+.RichTextEditorContentTypeHTMLField {
+  width: 100%;
+  height: 100%;
+  resize: none;
 }
