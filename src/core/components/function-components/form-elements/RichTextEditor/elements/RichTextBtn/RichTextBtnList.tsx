@@ -122,10 +122,78 @@ type typeListElement = {
   isLastItem: false;
 };
 
+const getListElements = (linesRanges: Range[]) => {
+  const listElements: typeListElement[] = [];
+  const listElementsByList: typeListElement[][] = [];
+  linesRanges.forEach((lineRange) => {
+    let listElement: typeListElement = {
+      range: lineRange,
+      list: null,
+      listItem: null,
+      isFirstItem: false,
+      isLastItem: false,
+    };
+    const inListObj = checkIfIsInList(lineRange.startContainer);
+    if (inListObj.list && inListObj.listItem) {
+      const listItems = Array.from(inListObj.list.children);
+      let isFirstItem = false;
+      let isLastItem = false;
+      listItems.forEach((item, index) => {
+        if (item === inListObj.listItem) {
+          if (index === 0) {
+            isFirstItem = true;
+          }
+          if (index === listItems.length - 1) {
+            isLastItem = true;
+          }
+        }
+      });
+      listElement = {
+        range: lineRange,
+        list: inListObj.list,
+        listItem: inListObj.listItem,
+        isFirstItem: isFirstItem,
+        isLastItem: isLastItem,
+      };
+    }
+    listElements.push(listElement);
+  });
+  listElements.forEach((element) => {
+    if (listElementsByList.length === 0) {
+      listElementsByList.push([]);
+      listElementsByList[0].push(element);
+    } else {
+      let listIndex = -1;
+      listElementsByList.forEach((listEl, index) => {
+        if (listEl?.[0]?.list === element.list) {
+          listIndex = index;
+        }
+      });
+      if (listIndex > -1) {
+        let listItemIndex = -1;
+        listElementsByList[listIndex].forEach((el, index) => {
+          if (el.listItem !== null && el.listItem === element.listItem) {
+            listItemIndex = index;
+          }
+        });
+        if (listItemIndex === -1) {
+          listElementsByList[listIndex].push(element);
+        }
+      } else {
+        listElementsByList.push([]);
+        listElementsByList[listElementsByList.length - 1].push(element);
+      }
+    }
+  });
+  return listElementsByList;
+};
+
 function RichTextBtnList({
+  listType,
   selection,
   handleUpdate,
 }: {
+  listType: "UL" | "OL";
   selection: Selection | null;
   handleUpdate: Function;
 }) {
@@ -134,73 +202,9 @@ function RichTextBtnList({
       const range = getSelectionRangeWithFullLinesSelected(selection);
 
       const linesRanges = getLinesRanges(selection, range);
-      const listElements: typeListElement[] = [];
-      linesRanges.forEach((lineRange) => {
-        let listElement: typeListElement = {
-          range: lineRange,
-          list: null,
-          listItem: null,
-          isFirstItem: false,
-          isLastItem: false,
-        };
-        const inListObj = checkIfIsInList(lineRange.startContainer);
-        if (inListObj.list && inListObj.listItem) {
-          const listItems = Array.from(inListObj.list.children);
-          let isFirstItem = false;
-          let isLastItem = false;
-          listItems.forEach((item, index) => {
-            if (item === inListObj.listItem) {
-              if (index === 0) {
-                isFirstItem = true;
-              }
-              if (index === listItems.length - 1) {
-                isLastItem = true;
-              }
-            }
-          });
-          listElement = {
-            range: lineRange,
-            list: inListObj.list,
-            listItem: inListObj.listItem,
-            isFirstItem: isFirstItem,
-            isLastItem: isLastItem,
-          };
-        }
-        listElements.push(listElement);
-      });
+      const listElements = getListElements(linesRanges);
 
-      const listElementsByList: typeListElement[][] = [];
-      listElements.forEach((element) => {
-        if (listElementsByList.length === 0) {
-          listElementsByList.push([]);
-          listElementsByList[0].push(element);
-        } else {
-          let listIndex = -1;
-          listElementsByList.forEach((listEl, index) => {
-            if (listEl?.[0]?.list === element.list) {
-              listIndex = index;
-            }
-          });
-          if (listIndex > -1) {
-            let listItemIndex = -1;
-            listElementsByList[listIndex].forEach((el, index) => {
-              if (el.listItem === element.listItem) {
-                listItemIndex = index;
-              }
-            });
-            if (listItemIndex === -1) {
-              listElementsByList[listIndex].push(element);
-            }
-          } else {
-            listElementsByList.push([]);
-            listElementsByList[listElementsByList.length - 1].push(element);
-          }
-        }
-      });
-
-      console.warn("listElementsByList = ", listElementsByList);
-
-      listElementsByList.reverse().forEach((listEl) => {
+      listElements.reverse().forEach((listEl) => {
         if (listEl[0].list) {
           let toAddAfterList = ``;
           let appendOnTheEnd = true;
@@ -224,7 +228,16 @@ function RichTextBtnList({
             }
           }
         } else {
-          const list = document.createElement("ul");
+          let list = null;
+          switch (listType) {
+            case "OL":
+              list = document.createElement("ol");
+              break;
+            case "UL":
+              list = document.createElement("ul");
+              break;
+          }
+
           if (range.endContainer) {
             const element = getNearestNotTextElement(range.endContainer);
             if (element) {
@@ -248,7 +261,8 @@ function RichTextBtnList({
 
   return (
     <button className={`${styles.RichTextBtn}`} onClick={handleClick}>
-      UL
+      {listType === "OL" ? "OL" : null}
+      {listType === "UL" ? "UL" : null}
     </button>
   );
 }

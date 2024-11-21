@@ -33,28 +33,7 @@ function Main() {
   // `);
   //##############################
   const [textValue, setTextValue] = useState(`
-    <div>1111</div>
-    <ul>
-      <li>AAA</li>
-      <li>
-        BBB
-        <div>DDD</div>
-        <ul>
-          <li>FFF111</li>
-          <li>GGG111</li>
-          <li>HHH111</li>
-        </ul>
-        <div>EEE</div>
-        <ul>
-          <li>FFF222</li>
-          <li>GGG222</li>
-          <li>HHH222</li>
-        </ul>
-      </li>
-      <li>CCC</li>
-    </ul>
-    <div>2222</div>
-
+    <div>111</div><div>222</div><div>333</div><div>444<br></div>
   `);
   //##############################
   // const [textValue, setTextValue] = useState(``);

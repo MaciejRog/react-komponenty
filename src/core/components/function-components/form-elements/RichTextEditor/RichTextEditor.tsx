@@ -136,6 +136,12 @@ function RichTextEditor({
           handleUpdate={handleValueChange}
         />
         <RichTextBtnList
+          listType="OL"
+          selection={selecteSelection}
+          handleUpdate={handleValueChange}
+        />
+        <RichTextBtnList
+          listType="UL"
           selection={selecteSelection}
           handleUpdate={handleValueChange}
         />
