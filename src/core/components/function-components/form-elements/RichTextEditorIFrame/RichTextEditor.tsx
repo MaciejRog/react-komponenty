@@ -12,9 +12,9 @@ function RichTextEditor({
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const [handleRefs, setHandleRefs] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [editorType, setEditorType] = useState(RICH_TEXT_EDITOR_TYPE.PREVIEW);
-  const [selecteSelection, setSelecteSelection] = useState<Selection | null>(
+  const [iframeSelection, setIframeSelection] = useState<Selection | null>(
     null
   );
   const [innerValue, setInnerValue] = useState(value);
@@ -32,29 +32,29 @@ function RichTextEditor({
         );
       }
     };
-  }, [handleRefs]);
+  }, [refresh]);
 
   const iframeWindowRef = useRef<Window | null>(null);
-  const htmlEditor = useRef<HTMLDivElement | null>(null);
+  const contentEditableRef = useRef<HTMLDivElement | null>(null);
 
   const handleSelectionChange = () => {
     if (iframeWindowRef.current) {
       const selection = iframeWindowRef.current.getSelection();
-      setSelecteSelection(selection);
+      setIframeSelection(selection);
     }
   };
 
   const updateValue = () => {
-    if (htmlEditor.current && setValue) {
-      if (htmlEditor.current.firstChild?.nodeType === 3) {
-        const tempText = htmlEditor.current.firstChild.textContent;
-        htmlEditor.current.firstChild.remove();
+    if (contentEditableRef.current && setValue) {
+      if (contentEditableRef.current.firstChild?.nodeType === 3) {
+        const tempText = contentEditableRef.current.firstChild.textContent;
+        contentEditableRef.current.firstChild.remove();
         const div = document.createElement("div");
         div.textContent = tempText;
-        htmlEditor.current.prepend(div);
-        selecteSelection?.setPosition(div, 1);
+        contentEditableRef.current.prepend(div);
+        iframeSelection?.setPosition(div, 1);
       }
-      setValue(htmlEditor.current.innerHTML);
+      setValue(contentEditableRef.current.innerHTML);
     }
   };
 
@@ -66,10 +66,7 @@ function RichTextEditor({
             editorType === RICH_TEXT_EDITOR_TYPE.HTML ? "hidden" : "visible",
         }}
       >
-        <RichTextHeader
-          selection={selecteSelection}
-          updateValue={updateValue}
-        />
+        <RichTextHeader selection={iframeSelection} updateValue={updateValue} />
       </div>
       <div className={`${styles.RichTextEditorContentWrapper}`}>
         <div className={`${styles.RichTextEditorContent}`}>
@@ -78,14 +75,14 @@ function RichTextEditor({
             onLoad={(e) => {
               const iframe = e.target as HTMLIFrameElement;
               iframeWindowRef.current = iframe.contentWindow;
-              setHandleRefs((prev) => !prev);
+              setRefresh((prev) => !prev);
             }}
             src="./RichTextEditor.html"
           ></iframe>
           {iframeWindowRef.current?.document?.body &&
             createPortal(
               <div
-                ref={htmlEditor}
+                ref={contentEditableRef}
                 className={`RichTextEditorContentTypePreviewField`}
                 data-rich-text-editor-component="true"
                 contentEditable="true"
